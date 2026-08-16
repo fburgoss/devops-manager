@@ -1,0 +1,78 @@
+.container {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 32px;
+  border: 1px solid #333;
+}
+
+.title {
+  margin: 0 0 16px 0;
+  color: #2ec4b6;
+  font-size: 1.2rem;
+}
+
+.salesList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.saleCard {
+  background-color: #2b2b2b;
+  padding: 14px;
+  border-radius: 6px;
+  border-left: 4px solid #2ec4b6;
+}
+
+.saleHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.saleTotal {
+  color: #2ec4b6;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.itemList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  color: #ddd;
+  padding: 2px 0;
+}
+
+.emptyText {
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+.btnDeleteSale {
+  background-color: transparent;
+  color: #cf6679;
+  border: 1px solid #cf6679;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.btnDeleteSale:hover {
+  background-color: #cf6679;
+  color: #fff;
+}

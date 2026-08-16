@@ -1,0 +1,69 @@
+.formContainer {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  max-width: 600px;
+  border: 1px solid #333;
+}
+
+.title {
+  margin: 0 0 16px 0;
+  color: #e63946;
+}
+
+.formGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #2b2b2b;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.rowTwoColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btnSubmit {
+  margin-top: 8px;
+  background-color: #e63946;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btnSubmit:hover {
+  background-color: #d62839;
+}
+
+.formContainer {
+  background-color: #1e1e1e; /* Tu color de fondo actual */
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid #333;
+
+  /* 👇 ESTAS 3 LÍNEAS SON LA CLAVE 👇 */
+  width: 100%;
+  max-width: 100%; /* Por si tenías un max-width: 500px o similar antes */
+  box-sizing: border-box;
+}

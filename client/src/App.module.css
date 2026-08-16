@@ -1,0 +1,103 @@
+/* Cabecera principal */
+/* Cabecera principal */
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra el texto */
+  text-align: center;
+  margin-top: 40px; /* 👈 AGREGA ESTO PARA DESPEGARLO DE ARRIBA */
+  margin-bottom: 40px; /* (Este es el que ya pusimos para separarlo de las tarjetas) */
+}
+
+.title {
+  margin: 0 0 8px 0;
+  font-size: 2.5rem;
+  color: #fff;
+}
+
+.subtitle {
+  margin: 0;
+  color: #aaa;
+  font-size: 1rem;
+}
+
+/* Layout en 2 columnas: Izquierda (Métricas + Form) / Derecha (Logo) */
+.mainLayout {
+  display: grid;
+  grid-template-columns: 1fr 340px; /* La columna derecha tiene un ancho fijo elegante */
+  gap: 24px;
+  align-items: start; /* 👈 CAMBIO CLAVE: Alinea arriba para evitar que el alto del logo desplace el formulario */
+  margin-bottom: 32px;
+}
+
+.leftSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%; /* 👈 Ocupa el 100% del ancho disponible de su columna */
+}
+
+/* Métricas adaptables */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%; /* 👈 Mantiene el ancho alineado con el formulario */
+}
+
+.metricCardRevenue {
+  background-color: #1e1e1e;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #2ec4b6;
+}
+
+.metricCardSold {
+  background-color: #1e1e1e;
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #e63946;
+}
+
+.metricLabel {
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.metricValueRevenue {
+  margin: 4px 0 0 0;
+  color: #2ec4b6;
+}
+
+.metricValueSold {
+  margin: 4px 0 0 0;
+  color: #e63946;
+}
+
+/* Contenedor transparente centrado sin fondo ni bordes */
+.logoContainer {
+  background-color: transparent; /* Sin fondo */
+  border: none; /* Sin bordes */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 100%;
+}
+
+/* El logo limpio flotando en el espacio */
+.brandLogo {
+  width: 100%;
+  max-width: 320px; /* Tamaño destacado */
+  height: auto;
+  object-fit: contain;
+  /* Sombra suave e ilustrativa alrededor del logo circular */
+  filter: drop-shadow(0px 8px 20px rgba(0, 0, 0, 0.6));
+}
+
+/* Responsive para pantallas pequeñas o celulares */
+@media (max-width: 768px) {
+  .mainLayout {
+    grid-template-columns: 1fr; /* Pasa a 1 sola columna en móviles */
+  }
+}
