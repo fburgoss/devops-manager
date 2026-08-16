@@ -7,22 +7,25 @@ import {
 import logoImg from "./assets/logo final.png";
 import styles from "./App.module.css";
 
+// Definimos la URL base usando la variable de entorno de Vite o fallback a localhost
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
 export function App() {
-  // 1. Iniciamos el estado vacío (ya no usamos localStorage)
+  // 1. Iniciamos el estado vacío
   const [sales, setSales] = useState<Sale[]>([]);
 
   // 2. GET: Cargamos las ventas del backend al abrir la app
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const response = await fetch("http://localhost:3000/sales");
+        const response = await fetch(`${API_URL}/sales`);
         if (response.ok) {
           const data = await response.json();
 
           // Adaptamos los datos planos del backend al formato que usa tu componente SalesHistory
           const formattedSales: Sale[] = data.map((d: any) => ({
             id: String(d.id),
-            date: new Date().toISOString(), // Usamos la fecha actual para el formato del historial
+            date: new Date().toISOString(),
             items: [
               {
                 productId: d.id,
@@ -42,7 +45,7 @@ export function App() {
     };
 
     fetchSales();
-  }, []); // El array vacío indica que se ejecuta solo al cargar la página
+  }, []);
 
   // 3. POST: Guardamos la nueva venta en NestJS
   const handleRegisterSale = async (saleData: {
@@ -53,7 +56,7 @@ export function App() {
     const totalAmount = saleData.price * saleData.quantity;
 
     try {
-      const response = await fetch("http://localhost:3000/sales", {
+      const response = await fetch(`${API_URL}/sales`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,7 +72,6 @@ export function App() {
       if (response.ok) {
         const savedSale = await response.json();
 
-        // Armamos la venta con el formato que necesita React para dibujarla
         const newSale: Sale = {
           id: String(savedSale.id),
           date: new Date().toISOString(),
@@ -91,7 +93,6 @@ export function App() {
     }
   };
 
-  // 4. (Por ahora borra solo visualmente, luego le haremos su Endpoint en NestJS)
   const handleDeleteSale = (id: string) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas anular esta venta?",
