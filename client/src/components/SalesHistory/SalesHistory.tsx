@@ -16,7 +16,7 @@ export interface Sale {
 
 interface SalesHistoryProps {
   sales: Sale[];
-  onDeleteSale: (id: string) => void; // 👈 Prop para anular/eliminar venta
+  onDeleteSale: (id: string) => void;
 }
 
 export function SalesHistory({ sales, onDeleteSale }: SalesHistoryProps) {
@@ -43,6 +43,9 @@ export function SalesHistory({ sales, onDeleteSale }: SalesHistoryProps) {
                 second: "2-digit",
               });
 
+              // Forzamos que el total sea un número entero limpio sin decimales
+              const cleanTotal = Math.round(Number(sale.total) || 0);
+
               return (
                 <div key={sale.id} className={styles.saleCard}>
                   <div className={styles.saleHeader}>
@@ -55,9 +58,8 @@ export function SalesHistory({ sales, onDeleteSale }: SalesHistoryProps) {
                       }}
                     >
                       <span className={styles.saleTotal}>
-                        ${sale.total.toLocaleString()}
+                        ${cleanTotal.toLocaleString()}
                       </span>
-                      {/* Botón para anular transacción */}
                       <button
                         onClick={() => onDeleteSale(sale.id)}
                         className={styles.btnDeleteSale}
@@ -68,17 +70,20 @@ export function SalesHistory({ sales, onDeleteSale }: SalesHistoryProps) {
                     </div>
                   </div>
                   <ul className={styles.itemList}>
-                    {sale.items.map((item) => (
-                      <li key={item.productId} className={styles.itemRow}>
-                        <span>
-                          {item.quantity}x {item.name} ($
-                          {item.price.toLocaleString()})
-                        </span>
-                        <span>
-                          ${(item.price * item.quantity).toLocaleString()}
-                        </span>
-                      </li>
-                    ))}
+                    {sale.items.map((item) => {
+                      const cleanPrice = Math.round(Number(item.price) || 0);
+                      const subtotal = cleanPrice * item.quantity;
+
+                      return (
+                        <li key={item.productId} className={styles.itemRow}>
+                          <span>
+                            {item.quantity}x {item.name} ($
+                            {cleanPrice.toLocaleString()})
+                          </span>
+                          <span>${subtotal.toLocaleString()}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               );
