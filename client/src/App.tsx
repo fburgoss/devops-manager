@@ -95,7 +95,6 @@ export function App() {
   };
 
   const handleDeleteSale = async (id: string) => {
-    // Agrega 'async'
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas anular esta venta?",
     );
@@ -119,10 +118,17 @@ export function App() {
     }
   };
 
+  // 4. Cálculos para las métricas
   const totalDailyRevenue = sales.reduce((acc, sale) => {
     const numericTotal = Number(sale.total) || 0;
     return acc + numericTotal;
   }, 0);
+
+  const totalDailyDrinksSold = sales.reduce(
+    (acc, sale) =>
+      acc + sale.items.reduce((sum, item) => sum + item.quantity, 0),
+    0,
+  );
 
   return (
     <div className={styles.container}>
