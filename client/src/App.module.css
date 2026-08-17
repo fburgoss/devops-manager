@@ -101,14 +101,12 @@
     flex-direction: column; /* Pone las cosas en columna vertical */
   }
 
-  /* Forzamos que el formulario vaya primero y el logo se vaya al final (debajo de todo) */
   .leftSection {
     order: 1;
   }
 
+  /* Oculta el logo en celulares para que no ocupe espacio entre el formulario y el historial */
   .logoContainer {
-    order: 2;
-    margin-top: 30px;
-    margin-bottom: 10px;
+    display: none;
   }
 }
