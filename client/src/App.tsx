@@ -8,7 +8,8 @@ import logoImg from "./assets/logo final.png";
 import styles from "./App.module.css";
 
 // Definimos la URL base usando la variable de entorno de Vite o fallback a localhost
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://tintobar-backend.onrender.com";
 
 export function App() {
   // 1. Iniciamos el estado vacío
