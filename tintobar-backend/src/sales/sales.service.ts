@@ -1,30 +1,34 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Sale } from './entities/sale.entity';
 import { CreateSaleDto } from './dto/create-sale.dto';
 
 @Injectable()
 export class SalesService {
-  // Nuestra "base de datos" temporal en memoria
-  private sales: any[] = [];
+  constructor(
+    @InjectRepository(Sale)
+    private readonly salesRepository: Repository<Sale>,
+  ) {}
 
-  create(createSaleDto: CreateSaleDto) {
-    // Armamos el objeto de la venta agregándole un ID y la hora actual
-    const newSale = {
-      id: Date.now(),
-      ...createSaleDto,
-      timestamp: new Date().toLocaleTimeString(),
-    };
+  async create(createSaleDto: CreateSaleDto): Promise<Sale> {
+    // Creamos la instancia de la venta con los datos que llegan
+    const newSale = this.salesRepository.create(createSaleDto);
 
-    // Lo guardamos en nuestro arreglo
-    this.sales.push(newSale);
+    // La guardamos de forma persistente en PostgreSQL
+    const savedSale = await this.salesRepository.save(newSale);
 
-    console.log('✅ Nueva venta recibida en Backend:', newSale);
-
-    // Devolvemos la venta creada para que el frontend la vea
-    return newSale;
+    console.log('✅ Nueva venta guardada en la Base de Datos:', savedSale);
+    return savedSale;
   }
 
-  findAll() {
-    // Devuelve todo el historial de ventas
-    return this.sales;
+  async findAll(): Promise<Sale[]> {
+    // Traemos todo el historial real desde la base de datos
+    return await this.salesRepository.find();
+  }
+
+  async remove(id: number): Promise<void> {
+    // Eliminamos la venta de la base de datos por su ID
+    await this.salesRepository.delete(id);
   }
 }
