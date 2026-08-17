@@ -1,12 +1,11 @@
 /* Cabecera principal */
-/* Cabecera principal */
 .header {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centra el texto */
+  align-items: center;
   text-align: center;
-  margin-top: 40px; /* 👈 AGREGA ESTO PARA DESPEGARLO DE ARRIBA */
-  margin-bottom: 40px; /* (Este es el que ya pusimos para separarlo de las tarjetas) */
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
 .title {
@@ -21,12 +20,12 @@
   font-size: 1rem;
 }
 
-/* Layout en 2 columnas: Izquierda (Métricas + Form) / Derecha (Logo) */
+/* Layout en 2 columnas para Escritorio */
 .mainLayout {
   display: grid;
-  grid-template-columns: 1fr 340px; /* La columna derecha tiene un ancho fijo elegante */
+  grid-template-columns: 1fr 340px;
   gap: 24px;
-  align-items: start; /* 👈 CAMBIO CLAVE: Alinea arriba para evitar que el alto del logo desplace el formulario */
+  align-items: start;
   margin-bottom: 32px;
 }
 
@@ -34,7 +33,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 100%; /* 👈 Ocupa el 100% del ancho disponible de su columna */
+  width: 100%;
 }
 
 /* Métricas adaptables */
@@ -42,7 +41,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
-  width: 100%; /* 👈 Mantiene el ancho alineado con el formulario */
+  width: 100%;
 }
 
 .metricCardRevenue {
@@ -74,10 +73,10 @@
   color: #e63946;
 }
 
-/* Contenedor transparente centrado sin fondo ni bordes */
+/* Contenedor del logo */
 .logoContainer {
-  background-color: transparent; /* Sin fondo */
-  border: none; /* Sin bordes */
+  background-color: transparent;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,37 +84,31 @@
   width: 100%;
 }
 
-/* El logo limpio flotando en el espacio */
 .brandLogo {
   width: 100%;
-  max-width: 320px; /* Tamaño destacado */
+  max-width: 320px;
   height: auto;
   object-fit: contain;
-  /* Sombra suave e ilustrativa alrededor del logo circular */
   filter: drop-shadow(0px 8px 20px rgba(0, 0, 0, 0.6));
 }
 
-/* Responsive para pantallas pequeñas o celulares */
+/* ==========================================
+   RESPONSIVE PARA CELULARES (Menos de 768px)
+   ========================================== */
 @media (max-width: 768px) {
   .mainLayout {
-    grid-template-columns: 1fr; /* Pasa a 1 sola columna en móviles */
+    display: flex;
+    flex-direction: column; /* Pone las cosas en columna vertical */
   }
 
-  /* Responsive para pantallas pequeñas o celulares */
-  @media (max-width: 768px) {
-    .mainLayout {
-      grid-template-columns: 1fr; /* Pasa a 1 sola columna en móviles */
-      display: flex; /* Cambiamos a flex para tener mejor control de orden */
-      flex-direction: column;
-    }
+  /* Forzamos que el formulario vaya primero y el logo se vaya al final (debajo de todo) */
+  .leftSection {
+    order: 1;
+  }
 
-    .logoContainer {
-      order: 2; /* Esto envía el logo al final (después del historial si fuera necesario) */
-      margin-top: 20px; /* Un poco de aire para despegarlo del formulario */
-    }
-
-    .leftSection {
-      order: 1; /* El formulario se mantiene arriba */
-    }
+  .logoContainer {
+    order: 2;
+    margin-top: 30px;
+    margin-bottom: 10px;
   }
 }
