@@ -7,13 +7,12 @@ import { AppService } from './app.service';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      // Si existe una variable de entorno URL (como la de Render), la usa; si no, usa localhost para desarrollo local
       url:
         process.env.DATABASE_URL ||
-        'postgres://tintobar:tu_password@localhost:5432/tintobardb',
+        'postgres://tintobar:wSambBrapTpFtw5WIpVKROH9pv6bQoJq@dpg-da1hn2lbedkc73d0jfq0-a/tintobardb',
       autoLoadEntities: true,
-      synchronize: true, // Esto crea la tabla 'sales' automáticamente la primera vez (ideal para este proyecto rápido)
-      ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false, // Necesario para conexiones seguras en Render
+      synchronize: true,
+      ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
     }),
   ],
   controllers: [AppController],
