@@ -119,13 +119,10 @@ export function App() {
     }
   };
 
-  const totalDailyRevenue = sales.reduce((acc, sale) => acc + sale.total, 0);
-
-  const totalDailyDrinksSold = sales.reduce(
-    (acc, sale) =>
-      acc + sale.items.reduce((sum, item) => sum + item.quantity, 0),
-    0,
-  );
+  const totalDailyRevenue = sales.reduce((acc, sale) => {
+    const numericTotal = Number(sale.total) || 0;
+    return acc + numericTotal;
+  }, 0);
 
   return (
     <div className={styles.container}>
