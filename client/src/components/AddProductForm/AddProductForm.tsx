@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import styles from "./AddProductForm.module.css";
 
-// ❌ Quitamos 'category: string' de aquí
 interface SaleFormData {
   name: string;
   price: number;
@@ -12,10 +11,21 @@ interface AddProductFormProps {
   onRegisterSale: (saleData: SaleFormData) => void;
 }
 
+// Definimos los precios específicos para cada trago
+const DRINK_PRICES: Record<string, { litro: number; medio: number }> = {
+  Borgoña: { litro: 7000, medio: 4000 },
+  Daiquiri: { litro: 7000, medio: 4000 },
+  Terremoto: { litro: 7000, medio: 4000 },
+  "Piña Colada": { litro: 9000, medio: 5500 },
+};
+
 export function AddProductForm({ onRegisterSale }: AddProductFormProps) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState(1);
+
+  // Obtenemos los precios según el trago seleccionado (si no hay selección, usa por defecto 7000/4000)
+  const currentPrices = DRINK_PRICES[name] || { litro: 7000, medio: 4000 };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -25,14 +35,12 @@ export function AddProductForm({ onRegisterSale }: AddProductFormProps) {
       return;
     }
 
-    // Ahora este objeto coincide perfectamente con la interface SaleFormData
     onRegisterSale({
       name,
       price: Number(price),
       quantity: Number(quantity),
     });
 
-    // Limpiamos los campos
     setName("");
     setPrice("");
     setQuantity(1);
@@ -47,7 +55,10 @@ export function AddProductForm({ onRegisterSale }: AddProductFormProps) {
           <label className={styles.label}>Nombre del Trago:</label>
           <select
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setPrice(""); // Resetea el precio al cambiar de trago para evitar incongruencias
+            }}
             className={styles.select}
           >
             <option value="" disabled>
@@ -71,8 +82,12 @@ export function AddProductForm({ onRegisterSale }: AddProductFormProps) {
               <option value="" disabled>
                 Seleccione precio...
               </option>
-              <option value="7000">$7.000 (1 Litro)</option>
-              <option value="4000">$4.000 (Medio Litro)</option>
+              <option value={currentPrices.litro}>
+                ${currentPrices.litro.toLocaleString()} (1 Litro)
+              </option>
+              <option value={currentPrices.medio}>
+                ${currentPrices.medio.toLocaleString()} (Medio Litro)
+              </option>
             </select>
           </div>
 
