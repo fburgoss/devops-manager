@@ -133,7 +133,21 @@ export function App() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.title}>🍹 El TintoBar</h1>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src={logoImg}
+            alt="El TintoBar Logo"
+            style={{ width: "45px", height: "45px", objectFit: "contain" }}
+          />
+          <h1 className={styles.title}>El TintoBar</h1>
+        </div>
         <p className={styles.subtitle}>
           Control rápido de transacciones diarias
         </p>
