@@ -100,4 +100,22 @@
   .mainLayout {
     grid-template-columns: 1fr; /* Pasa a 1 sola columna en móviles */
   }
+
+  /* Responsive para pantallas pequeñas o celulares */
+  @media (max-width: 768px) {
+    .mainLayout {
+      grid-template-columns: 1fr; /* Pasa a 1 sola columna en móviles */
+      display: flex; /* Cambiamos a flex para tener mejor control de orden */
+      flex-direction: column;
+    }
+
+    .logoContainer {
+      order: 2; /* Esto envía el logo al final (después del historial si fuera necesario) */
+      margin-top: 20px; /* Un poco de aire para despegarlo del formulario */
+    }
+
+    .leftSection {
+      order: 1; /* El formulario se mantiene arriba */
+    }
+  }
 }
