@@ -94,12 +94,28 @@ export function App() {
     }
   };
 
-  const handleDeleteSale = (id: string) => {
+  const handleDeleteSale = async (id: string) => {
+    // Agrega 'async'
     const confirmDelete = window.confirm(
       "¿Estás seguro de que deseas anular esta venta?",
     );
+
     if (confirmDelete) {
-      setSales((prevSales) => prevSales.filter((sale) => sale.id !== id));
+      try {
+        // 1. Enviamos la petición DELETE al backend
+        const response = await fetch(`${API_URL}/sales/${id}`, {
+          method: "DELETE",
+        });
+
+        // 2. Si el servidor confirma el borrado, actualizamos el estado
+        if (response.ok) {
+          setSales((prevSales) => prevSales.filter((sale) => sale.id !== id));
+        } else {
+          alert("No se pudo eliminar la venta en el servidor.");
+        }
+      } catch (error) {
+        console.error("Error al eliminar la venta:", error);
+      }
     }
   };
 
