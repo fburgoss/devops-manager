@@ -146,7 +146,7 @@ export function App() {
             alt="El TiintoBar Logo"
             style={{ width: "45px", height: "45px", objectFit: "contain" }}
           />
-          <h1 className={styles.title}>El TintoBar</h1>
+          <h1 className={styles.title}>El TiintoBar</h1>
         </div>
         <p className={styles.subtitle}>
           Control rápido de transacciones diarias
