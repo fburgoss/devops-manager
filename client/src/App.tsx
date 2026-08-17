@@ -143,7 +143,7 @@ export function App() {
         >
           <img
             src={logoImg}
-            alt="El TintoBar Logo"
+            alt="El TiintoBar Logo"
             style={{ width: "45px", height: "45px", objectFit: "contain" }}
           />
           <h1 className={styles.title}>El TintoBar</h1>
