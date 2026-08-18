@@ -130,6 +130,39 @@ export function App() {
     0,
   );
 
+  // 5. Función para Finalizar el Día y enviar el correo
+  const handleCloseDay = async () => {
+    if (
+      !window.confirm(
+        "¿Deseas finalizar el día y enviar el reporte a tu correo?",
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/sales/close-day`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          totalSales: totalDailyRevenue,
+          salesCount: totalDailyDrinksSold,
+        }),
+      });
+
+      if (response.ok) {
+        alert("¡Día finalizado y reporte enviado a tu correo con éxito!");
+      } else {
+        alert("Hubo un error al enviar el reporte.");
+      }
+    } catch (error) {
+      console.error("Error al conectar con el servidor para el cierre:", error);
+      alert("Error de conexión con el servidor.");
+    }
+  };
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -184,6 +217,29 @@ export function App() {
       </div>
 
       <SalesHistory sales={sales} onDeleteSale={handleDeleteSale} />
+
+      {/* Botón de Cierre de Día */}
+      <div
+        style={{ textAlign: "center", marginTop: "30px", marginBottom: "40px" }}
+      >
+        <button
+          onClick={handleCloseDay}
+          style={{
+            backgroundColor: "#ff4757",
+            color: "white",
+            border: "none",
+            padding: "14px 28px",
+            borderRadius: "8px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            fontSize: "1.1rem",
+            boxShadow: "0 4px 12px rgba(255, 71, 87, 0.3)",
+            transition: "background 0.2s",
+          }}
+        >
+          🏁 Finalizar Día y Enviar Reporte
+        </button>
+      </div>
     </div>
   );
 }
