@@ -1,48 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
-  private transporter;
+  private resend: Resend;
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: Number(process.env.MAIL_PORT),
-      secure: false,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-    });
+    // Asegúrate de tener RESEND_API_KEY en tu .env y en Render
+    this.resend = new Resend(process.env.RESEND_API_KEY);
   }
 
-  async sendDailyReport(totalSales: number, salesCount: number) {
-    const today = new Date().toLocaleDateString('es-CL');
+  async sendReport(total: number, count: number) {
+    const today = new Date().toLocaleDateString();
 
-    const htmlContent = `
-      <div style="font-family: Arial, sans-serif; background-color: #121212; color: #ffffff; padding: 20px; border-radius: 8px;">
-        <div style="text-align: center; margin-bottom: 20px;">
-          <h1 style="color: #ff4757; margin: 0;">El TintoBar</h1>
-          <p style="color: #a4b0be; font-size: 14px;">Control rápido de transacciones diarias</p>
-        </div>
-        <div style="background-color: #1e1e1e; padding: 20px; border-radius: 6px; border: 1px solid #2f3542;">
-          <h2 style="color: #2ed573; margin-top: 0;">📊 Reporte de Cierre de Día</h2>
-          <p><strong>Fecha:</strong> ${today}</p>
-          <p><strong>Total de tragos vendidos:</strong> ${salesCount} un.</p>
-          <p style="font-size: 18px;"><strong>Recaudación Total:</strong> <span style="color: #2ed573;">$${totalSales.toLocaleString()}</span></p>
-        </div>
-        <p style="text-align: center; color: #747d8c; font-size: 12px; margin-top: 20px;">
-          Este es un correo automático generado por tu aplicación de El TintoBar.
-        </p>
-      </div>
-    `;
-
-    await this.transporter.sendMail({
-      from: `"El TintoBar Bot" <${process.env.MAIL_USER}>`,
-      to: process.env.MAIL_USER,
+    // Aquí defines tu correo, debe ser un dominio verificado o el de prueba
+    await this.resend.emails.send({
+      from: 'El TintoBar <onboarding@resend.dev>', // Usa este mientras no verifiques dominio
+      to: process.env.MAIL_USER || 'f.burgoss1589@gmail.com',
       subject: `📈 Cierre de Caja El TintoBar - ${today}`,
-      html: htmlContent,
+      html: `
+        <h1>Reporte Diario</h1>
+        <p>Total Recaudado: <strong>$${total.toLocaleString()}</strong></p>
+        <p>Tragos Vendidos: <strong>${count} un.</strong></p>
+      `,
     });
   }
 }
