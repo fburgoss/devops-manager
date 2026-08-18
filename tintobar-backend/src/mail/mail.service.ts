@@ -21,13 +21,17 @@ export class MailService {
         <div style="background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px 20px; border-radius: 8px;">
           <div style="max-width: 500px; margin: 0 auto; background-color: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333333; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
             
-            <!-- Encabezado / Logo o Título -->
+            <!-- Encabezado / Logo o Título MODIFICADO -->
             <div style="text-align: center; border-bottom: 2px solid #e53935; padding-bottom: 20px; margin-bottom: 25px;">
-              <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">EL TINTOBAR</h1>
+              
+              <!-- AQUI AGREGAMOS TU LOGO -->
+              <img src="URL_DE_TU_LOGO" alt="Logo El TintoBar" style="max-width: 150px; height: auto; margin-bottom: 15px;" />
+              
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">EL TIINTOBAR</h1>
               <p style="color: #aaaaaa; margin: 5px 0 0 0; font-size: 14px;">Resumen de Cierre Diario</p>
             </div>
 
-            <!-- Contenido Principal -->
+            <!-- El resto del contenido sigue igual... -->
             <div style="margin-bottom: 25px;">
               <p style="color: #cccccc; font-size: 15px; margin-bottom: 20px;">Hola, Francisco. Aquí tienes las métricas correspondientes a las ventas registradas el día <strong>${today}</strong>:</p>
               
@@ -45,7 +49,7 @@ export class MailService {
 
             <!-- Pie de página -->
             <div style="text-align: center; border-top: 1px solid #333333; padding-top: 20px; color: #777777; font-size: 12px;">
-              <p style="margin: 0;">Generado automáticamente por el sistema de gestión de El TintoBar.</p>
+              <p style="margin: 0;">Generado automáticamente por el sistema de gestión de El TiintoBar.</p>
             </div>
 
           </div>
