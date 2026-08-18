@@ -13,15 +13,43 @@ export class MailService {
   async sendReport(total: number, count: number) {
     const today = new Date().toLocaleDateString();
 
-    // Aquí defines tu correo, debe ser un dominio verificado o el de prueba
     await this.resend.emails.send({
-      from: 'El TintoBar <onboarding@resend.dev>', // Usa este mientras no verifiques dominio
+      from: 'El TiintoBar <onboarding@resend.dev>',
       to: process.env.MAIL_USER || 'f.burgoss1589@gmail.com',
-      subject: `📈 Cierre de Caja El TintoBar - ${today}`,
+      subject: `🍷 Reporte de Cierre - El TintoBar [${today}]`,
       html: `
-        <h1>Reporte Diario</h1>
-        <p>Total Recaudado: <strong>$${total.toLocaleString()}</strong></p>
-        <p>Tragos Vendidos: <strong>${count} un.</strong></p>
+        <div style="background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px 20px; border-radius: 8px;">
+          <div style="max-width: 500px; margin: 0 auto; background-color: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333333; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            
+            <!-- Encabezado / Logo o Título -->
+            <div style="text-align: center; border-bottom: 2px solid #e53935; padding-bottom: 20px; margin-bottom: 25px;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">EL TINTOBAR</h1>
+              <p style="color: #aaaaaa; margin: 5px 0 0 0; font-size: 14px;">Resumen de Cierre Diario</p>
+            </div>
+
+            <!-- Contenido Principal -->
+            <div style="margin-bottom: 25px;">
+              <p style="color: #cccccc; font-size: 15px; margin-bottom: 20px;">Hola, Francisco. Aquí tienes las métricas correspondientes a las ventas registradas el día <strong>${today}</strong>:</p>
+              
+              <!-- Tarjeta de Totales -->
+              <div style="background-color: #2a2a2a; padding: 15px 20px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #aaaaaa; font-size: 14px;">Total Recaudado:</span>
+                <span style="color: #4caf50; font-size: 20px; font-weight: bold;">$${total.toLocaleString()}</span>
+              </div>
+
+              <div style="background-color: #2a2a2a; padding: 15px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #aaaaaa; font-size: 14px;">Tragos Vendidos:</span>
+                <span style="color: #ffffff; font-size: 20px; font-weight: bold;">${count} un.</span>
+              </div>
+            </div>
+
+            <!-- Pie de página -->
+            <div style="text-align: center; border-top: 1px solid #333333; padding-top: 20px; color: #777777; font-size: 12px;">
+              <p style="margin: 0;">Generado automáticamente por el sistema de gestión de El TintoBar.</p>
+            </div>
+
+          </div>
+        </div>
       `,
     });
   }
