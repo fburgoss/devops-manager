@@ -28,7 +28,7 @@ export class SalesController {
   @Post('close-day')
   async closeDay(@Body() body: { totalSales: number; salesCount: number }) {
     try {
-      await this.mailService.sendDailyReport(body.totalSales, body.salesCount);
+      await this.mailService.sendReport(body.totalSales, body.salesCount);
       return {
         success: true,
         message: 'Correo de cierre enviado exitosamente',
