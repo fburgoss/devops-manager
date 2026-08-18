@@ -25,7 +25,8 @@ export class MailService {
             <div style="text-align: center; border-bottom: 2px solid #e53935; padding-bottom: 20px; margin-bottom: 25px;">
               
               <!-- AQUI AGREGAMOS TU LOGO -->
-              <img src="URL_DE_TU_LOGO" alt="Logo El TintoBar" style="max-width: 150px; height: auto; margin-bottom: 15px;" />
+              <!-- AQUI AGREGAMOS TU LOGO -->
+<img src="https://raw.githubusercontent.com/fburgoss/devops-manager/main/client/src/assets/logo%20final.png" alt="Logo El TintoBar" style="max-width: 150px; height: auto; margin-bottom: 15px;" />
               
               <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">EL TIINTOBAR</h1>
               <p style="color: #aaaaaa; margin: 5px 0 0 0; font-size: 14px;">Resumen de Cierre Diario</p>
