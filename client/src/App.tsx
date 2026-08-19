@@ -297,42 +297,21 @@ export function App() {
                                 >
                                   {weekName}
                                 </span>
-                                <div
+                                <span
                                   style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "10px",
+                                    color: "#4caf50",
+                                    fontWeight: "bold",
                                   }}
                                 >
-                                  <button
-                                    onClick={() => setSelectedWeek(weekData)}
-                                    style={{
-                                      background: "#333",
-                                      color: "#00d2d3",
-                                      fontSize: "0.7rem",
-                                      border: "1px solid #555",
-                                      borderRadius: "4px",
-                                      padding: "2px 6px",
-                                      cursor: "pointer",
-                                    }}
-                                  >
-                                    📊 Ver gráficos
-                                  </button>
-                                  <span
-                                    style={{
-                                      color: "#4caf50",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    Subtotal: $
-                                    {weekData.weekTotal.toLocaleString()}
-                                  </span>
-                                </div>
+                                  Subtotal: $
+                                  {weekData.weekTotal.toLocaleString()}
+                                </span>
                               </div>
                               <div
                                 style={{
                                   borderLeft: "2px solid #444",
                                   paddingLeft: "10px",
+                                  marginTop: "8px",
                                 }}
                               >
                                 {weekData.days.map((day: any, j: number) => (
@@ -343,6 +322,7 @@ export function App() {
                                       justifyContent: "space-between",
                                       fontSize: "0.8rem",
                                       color: "#aaa",
+                                      marginBottom: "2px",
                                     }}
                                   >
                                     <span>
