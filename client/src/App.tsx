@@ -391,7 +391,7 @@ export function App() {
                             display: "flex",
                             flexDirection: "column",
                             gap: "10px",
-                            maxHeight: "250px",
+                            maxHeight: "280px",
                             overflowY: "auto",
                           }}
                         >
@@ -399,19 +399,18 @@ export function App() {
                             ([weekName, weekData], wIndex) => (
                               <div
                                 key={wIndex}
-                                onClick={() => setSelectedWeek(weekData)}
                                 style={{
                                   backgroundColor: "#2a2a2a",
                                   padding: "10px",
                                   borderRadius: "6px",
                                   borderLeft: "4px solid #ff4757",
-                                  cursor: "pointer",
                                 }}
                               >
                                 <div
                                   style={{
                                     display: "flex",
                                     justifyContent: "space-between",
+                                    alignItems: "center",
                                     marginBottom: "6px",
                                   }}
                                 >
@@ -422,21 +421,46 @@ export function App() {
                                       fontSize: "0.85rem",
                                     }}
                                   >
-                                    {weekName} 📊 (Ver gráficos)
+                                    {weekName}
                                   </span>
-                                  <span
+
+                                  <div
                                     style={{
-                                      color: "#4caf50",
-                                      fontWeight: "bold",
-                                      fontSize: "0.85rem",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "10px",
                                     }}
                                   >
-                                    Subtotal: $
-                                    {weekData.weekTotal.toLocaleString()}
-                                  </span>
+                                    {/* Botón para ver los gráficos detallados de esta semana */}
+                                    <button
+                                      onClick={() => setSelectedWeek(weekData)}
+                                      style={{
+                                        background: "#333",
+                                        border: "1px solid #555",
+                                        color: "#00d2d3",
+                                        borderRadius: "4px",
+                                        padding: "2px 6px",
+                                        fontSize: "0.7rem",
+                                        cursor: "pointer",
+                                      }}
+                                    >
+                                      📊 Ver gráficos
+                                    </button>
+
+                                    <span
+                                      style={{
+                                        color: "#4caf50",
+                                        fontWeight: "bold",
+                                        fontSize: "0.85rem",
+                                      }}
+                                    >
+                                      Subtotal: $
+                                      {weekData.weekTotal.toLocaleString()}
+                                    </span>
+                                  </div>
                                 </div>
 
-                                {/* Días de la semana */}
+                                {/* Días de la semana (Fechas y montos individuales restaurados) */}
                                 <div
                                   style={{
                                     display: "flex",
