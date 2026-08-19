@@ -431,7 +431,7 @@ export function App() {
                                       gap: "10px",
                                     }}
                                   >
-                                    {/* Botón para ver los gráficos detallados de esta semana */}
+                                    {/* Botón para ver los gráficos avanzados */}
                                     <button
                                       onClick={() => setSelectedWeek(weekData)}
                                       style={{
@@ -460,7 +460,7 @@ export function App() {
                                   </div>
                                 </div>
 
-                                {/* Días de la semana (Fechas y montos individuales restaurados) */}
+                                {/* DETALLE DE LOS DÍAS (Fechas, tragos y montos individuales restaurados) */}
                                 <div
                                   style={{
                                     display: "flex",
