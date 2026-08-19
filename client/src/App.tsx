@@ -18,6 +18,9 @@ export function App() {
   // Estado para controlar qué mes se muestra en el widget (índice del mes)
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
 
+  // Estado para alternar la visibilidad del widget de métricas históricas
+  const [showHistoryWidget, setShowHistoryWidget] = useState(true);
+
   // Estado para el historial agrupado por Meses y Semanas
   const [historySummary, setHistorySummary] = useState<{
     [monthName: string]: {
@@ -229,6 +232,7 @@ export function App() {
           <AddProductForm onRegisterSale={handleRegisterSale} />
 
           {/* WIDGET DE MÉTRICAS HISTÓRICAS CON NAVEGACIÓN LATERAL DE MESES */}
+          {/* WIDGET DE MÉTRICAS HISTÓRICAS CON CONTROL DE VISIBILIDAD Y CRONOLOGÍA CORRECTA */}
           <div
             style={{
               backgroundColor: "#1e1e1e",
@@ -239,208 +243,227 @@ export function App() {
               marginBottom: "15px",
             }}
           >
-            <h3
+            <div
               style={{
-                color: "#ffffff",
-                marginBottom: "15px",
-                fontSize: "1.05rem",
-                textAlign: "center",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                cursor: "pointer",
               }}
+              onClick={() => setShowHistoryWidget(!showHistoryWidget)}
             >
-              📊 Resumen por Meses y Semanas
-            </h3>
-
-            {Object.keys(historySummary).length === 0 ? (
-              <p
+              <h3
                 style={{
-                  color: "#888888",
+                  color: "#ffffff",
+                  margin: 0,
+                  fontSize: "1.05rem",
                   textAlign: "center",
-                  fontSize: "0.85rem",
+                  width: "100%",
                 }}
               >
-                Aún no hay jornadas cerradas registradas.
-              </p>
-            ) : (
-              (() => {
-                const monthsKeys = Object.keys(historySummary);
-                // Aseguramos que el índice no se salga de rango
-                const safeIndex = Math.min(
-                  currentMonthIndex,
-                  monthsKeys.length - 1,
-                );
-                const currentMonthName = monthsKeys[safeIndex];
-                const weeks = historySummary[currentMonthName];
-                const monthTotal = Object.values(weeks).reduce(
-                  (acc, w) => acc + w.weekTotal,
-                  0,
-                );
+                📊 Resumen por Meses y Semanas {showHistoryWidget ? "▲" : "▼"}
+              </h3>
+            </div>
 
-                return (
-                  <div>
-                    {/* Barra de Navegación de Meses con Flechas */}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "#252525",
-                        padding: "10px 14px",
-                        borderRadius: "8px",
-                        border: "1px solid #444",
-                        marginBottom: "12px",
-                      }}
-                    >
-                      <button
-                        onClick={() =>
-                          setCurrentMonthIndex((prev) => Math.max(prev - 1, 0))
-                        }
-                        disabled={safeIndex === 0}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color: safeIndex === 0 ? "#555" : "#ff4757",
-                          fontSize: "1.2rem",
-                          cursor: safeIndex === 0 ? "not-allowed" : "pointer",
-                          fontWeight: "bold",
-                          padding: "0 8px",
-                        }}
-                      >
-                        ◀
-                      </button>
+            {showHistoryWidget && (
+              <div style={{ marginTop: "15px" }}>
+                {Object.keys(historySummary).length === 0 ? (
+                  <p
+                    style={{
+                      color: "#888888",
+                      textAlign: "center",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Aún no hay jornadas cerradas registradas.
+                  </p>
+                ) : (
+                  (() => {
+                    // Invertimos las llaves para que el primer mes sea el más antiguo (ej. Junio -> Julio -> Agosto)
+                    const monthsKeys = Object.keys(historySummary).reverse();
+                    const safeIndex = Math.min(
+                      currentMonthIndex,
+                      monthsKeys.length - 1,
+                    );
+                    const currentMonthName = monthsKeys[safeIndex];
+                    const weeks = historySummary[currentMonthName];
+                    const monthTotal = Object.values(weeks).reduce(
+                      (acc, w) => acc + w.weekTotal,
+                      0,
+                    );
 
-                      <div style={{ textAlign: "center" }}>
-                        <span
+                    return (
+                      <div>
+                        {/* Barra de Navegación de Meses con Flechas en orden cronológico */}
+                        <div
                           style={{
-                            color: "#ff4757",
-                            fontWeight: "bold",
-                            fontSize: "1rem",
-                            display: "block",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            backgroundColor: "#252525",
+                            padding: "10px 14px",
+                            borderRadius: "8px",
+                            border: "1px solid #444",
+                            marginBottom: "12px",
                           }}
                         >
-                          📅 {currentMonthName.toUpperCase()}
-                        </span>
-                        <span
-                          style={{
-                            color: "#4caf50",
-                            fontWeight: "bold",
-                            fontSize: "0.85rem",
-                          }}
-                        >
-                          Total Mes: ${monthTotal.toLocaleString()}
-                        </span>
-                      </div>
-
-                      <button
-                        onClick={() =>
-                          setCurrentMonthIndex((prev) =>
-                            Math.min(prev + 1, monthsKeys.length - 1),
-                          )
-                        }
-                        disabled={safeIndex === monthsKeys.length - 1}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color:
-                            safeIndex === monthsKeys.length - 1
-                              ? "#555"
-                              : "#ff4757",
-                          fontSize: "1.2rem",
-                          cursor:
-                            safeIndex === monthsKeys.length - 1
-                              ? "not-allowed"
-                              : "pointer",
-                          fontWeight: "bold",
-                          padding: "0 8px",
-                        }}
-                      >
-                        ▶
-                      </button>
-                    </div>
-
-                    {/* Semanas del Mes Seleccionado */}
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                        maxHeight: "250px",
-                        overflowY: "auto",
-                      }}
-                    >
-                      {Object.entries(weeks).map(
-                        ([weekName, weekData], wIndex) => (
-                          <div
-                            key={wIndex}
+                          <button
+                            onClick={() =>
+                              setCurrentMonthIndex((prev) =>
+                                Math.max(prev - 1, 0),
+                              )
+                            }
+                            disabled={safeIndex === 0}
                             style={{
-                              backgroundColor: "#2a2a2a",
-                              padding: "10px",
-                              borderRadius: "6px",
-                              borderLeft: "4px solid #ff4757",
+                              background: "none",
+                              border: "none",
+                              color: safeIndex === 0 ? "#555" : "#ff4757",
+                              fontSize: "1.2rem",
+                              cursor:
+                                safeIndex === 0 ? "not-allowed" : "pointer",
+                              fontWeight: "bold",
+                              padding: "0 8px",
                             }}
                           >
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                marginBottom: "6px",
-                              }}
-                            >
-                              <span
-                                style={{
-                                  color: "#ffffff",
-                                  fontWeight: "bold",
-                                  fontSize: "0.85rem",
-                                }}
-                              >
-                                {weekName}
-                              </span>
-                              <span
-                                style={{
-                                  color: "#4caf50",
-                                  fontWeight: "bold",
-                                  fontSize: "0.85rem",
-                                }}
-                              >
-                                Subtotal: ${weekData.weekTotal.toLocaleString()}
-                              </span>
-                            </div>
+                            ◀
+                          </button>
 
-                            {/* Días de la semana */}
-                            <div
+                          <div style={{ textAlign: "center" }}>
+                            <span
                               style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: "4px",
-                                paddingLeft: "10px",
-                                borderLeft: "2px solid #444",
+                                color: "#ff4757",
+                                fontWeight: "bold",
+                                fontSize: "1rem",
+                                display: "block",
                               }}
                             >
-                              {weekData.days.map((day, dIndex) => (
+                              📅 {currentMonthName.toUpperCase()}
+                            </span>
+                            <span
+                              style={{
+                                color: "#4caf50",
+                                fontWeight: "bold",
+                                fontSize: "0.85rem",
+                              }}
+                            >
+                              Total Mes: ${monthTotal.toLocaleString()}
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() =>
+                              setCurrentMonthIndex((prev) =>
+                                Math.min(prev + 1, monthsKeys.length - 1),
+                              )
+                            }
+                            disabled={safeIndex === monthsKeys.length - 1}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color:
+                                safeIndex === monthsKeys.length - 1
+                                  ? "#555"
+                                  : "#ff4757",
+                              fontSize: "1.2rem",
+                              cursor:
+                                safeIndex === monthsKeys.length - 1
+                                  ? "not-allowed"
+                                  : "pointer",
+                              fontWeight: "bold",
+                              padding: "0 8px",
+                            }}
+                          >
+                            ▶
+                          </button>
+                        </div>
+
+                        {/* Semanas del Mes Seleccionado */}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                            maxHeight: "250px",
+                            overflowY: "auto",
+                          }}
+                        >
+                          {Object.entries(weeks).map(
+                            ([weekName, weekData], wIndex) => (
+                              <div
+                                key={wIndex}
+                                style={{
+                                  backgroundColor: "#2a2a2a",
+                                  padding: "10px",
+                                  borderRadius: "6px",
+                                  borderLeft: "4px solid #ff4757",
+                                }}
+                              >
                                 <div
-                                  key={dIndex}
                                   style={{
                                     display: "flex",
                                     justifyContent: "space-between",
-                                    fontSize: "0.8rem",
-                                    color: "#aaaaaa",
+                                    marginBottom: "6px",
                                   }}
                                 >
-                                  <span>
-                                    • {day.date} ({day.count} tragos)
+                                  <span
+                                    style={{
+                                      color: "#ffffff",
+                                      fontWeight: "bold",
+                                      fontSize: "0.85rem",
+                                    }}
+                                  >
+                                    {weekName}
                                   </span>
-                                  <span style={{ color: "#fff" }}>
-                                    ${Number(day.total).toLocaleString()}
+                                  <span
+                                    style={{
+                                      color: "#4caf50",
+                                      fontWeight: "bold",
+                                      fontSize: "0.85rem",
+                                    }}
+                                  >
+                                    Subtotal: $
+                                    {weekData.weekTotal.toLocaleString()}
                                   </span>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                );
-              })()
+
+                                {/* Días de la semana */}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "4px",
+                                    paddingLeft: "10px",
+                                    borderLeft: "2px solid #444",
+                                  }}
+                                >
+                                  {weekData.days.map((day, dIndex) => (
+                                    <div
+                                      key={dIndex}
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        fontSize: "0.8rem",
+                                        color: "#aaaaaa",
+                                      }}
+                                    >
+                                      <span>
+                                        • {day.date} ({day.count} tragos)
+                                      </span>
+                                      <span style={{ color: "#fff" }}>
+                                        ${Number(day.total).toLocaleString()}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()
+                )}
+              </div>
             )}
           </div>
         </div>
