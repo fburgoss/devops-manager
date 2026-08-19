@@ -15,11 +15,16 @@ export function App() {
   // 1. Iniciamos el estado vacío
   const [sales, setSales] = useState<Sale[]>([]);
 
-  // Estado para el historial de métricas
+  // Estado para el historial agrupado por Meses y Semanas
   const [historySummary, setHistorySummary] = useState<{
-    totalClosedDays: number;
-    days: { date: string; total: number; count: number }[];
-  }>({ totalClosedDays: 0, days: [] });
+    [monthName: string]: {
+      [weekName: string]: {
+        days: { date: string; total: number; count: number }[];
+        weekTotal: number;
+        weekCount: number;
+      };
+    };
+  }>({});
 
   // Función para cargar el resumen histórico
   const fetchHistory = async () => {
@@ -220,7 +225,7 @@ export function App() {
 
           <AddProductForm onRegisterSale={handleRegisterSale} />
 
-          {/* WIDGET DE MÉTRICAS HISTÓRICAS UBICADO EXACTAMENTE DONDE LO PEDISTE */}
+          {/* WIDGET DE MÉTRICAS HISTÓRICAS POR MES Y SEMANA */}
           <div
             style={{
               backgroundColor: "#1e1e1e",
@@ -234,15 +239,15 @@ export function App() {
             <h3
               style={{
                 color: "#ffffff",
-                marginBottom: "12px",
+                marginBottom: "15px",
                 fontSize: "1.05rem",
                 textAlign: "center",
               }}
             >
-              📊 Resumen de Jornadas Anteriores
+              📊 Resumen por Meses y Semanas
             </h3>
 
-            {historySummary.days.length === 0 ? (
+            {Object.keys(historySummary).length === 0 ? (
               <p
                 style={{
                   color: "#888888",
@@ -257,52 +262,144 @@ export function App() {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: "8px",
-                  maxHeight: "250px",
+                  gap: "15px",
+                  maxHeight: "300px",
                   overflowY: "auto",
                 }}
               >
-                {historySummary.days.map((day, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      backgroundColor: "#2a2a2a",
-                      padding: "10px 14px",
-                      borderRadius: "8px",
-                      borderLeft: "4px solid #ff4757",
-                    }}
-                  >
-                    <div>
-                      <span
+                {Object.entries(historySummary).map(
+                  ([monthName, weeks], mIndex) => {
+                    // Calculamos el total general del mes
+                    const monthTotal = Object.values(weeks).reduce(
+                      (acc, w) => acc + w.weekTotal,
+                      0,
+                    );
+
+                    return (
+                      <div
+                        key={mIndex}
                         style={{
-                          color: "#ffffff",
-                          fontWeight: "bold",
-                          fontSize: "0.9rem",
-                          display: "block",
+                          backgroundColor: "#252525",
+                          padding: "12px",
+                          borderRadius: "8px",
+                          border: "1px solid #444",
                         }}
                       >
-                        📅 {day.date}
-                      </span>
-                      <span style={{ color: "#aaaaaa", fontSize: "0.8rem" }}>
-                        Vendidos: {day.count} un.
-                      </span>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                      <span
-                        style={{
-                          color: "#4caf50",
-                          fontWeight: "bold",
-                          fontSize: "1rem",
-                        }}
-                      >
-                        ${Number(day.total).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                        {/* Encabezado del Mes */}
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            borderBottom: "1px solid #333",
+                            paddingBottom: "8px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "#ff4757",
+                              fontWeight: "bold",
+                              fontSize: "1rem",
+                            }}
+                          >
+                            📅 {monthName.toUpperCase()}
+                          </span>
+                          <span
+                            style={{
+                              color: "#4caf50",
+                              fontWeight: "bold",
+                              fontSize: "0.95srem",
+                            }}
+                          >
+                            Total Mes: ${monthTotal.toLocaleString()}
+                          </span>
+                        </div>
+
+                        {/* Semanas del Mes */}
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                          }}
+                        >
+                          {Object.entries(weeks).map(
+                            ([weekName, weekData], wIndex) => (
+                              <div
+                                key={wIndex}
+                                style={{
+                                  backgroundColor: "#2a2a2a",
+                                  padding: "10px",
+                                  borderRadius: "6px",
+                                  borderLeft: "4px solid #ff4757",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginBottom: "6px",
+                                  }}
+                                >
+                                  <span
+                                    style={{
+                                      color: "#ffffff",
+                                      fontWeight: "bold",
+                                      fontSize: "0.85rem",
+                                    }}
+                                  >
+                                    {weekName}
+                                  </span>
+                                  <span
+                                    style={{
+                                      color: "#4caf50",
+                                      fontWeight: "bold",
+                                      fontSize: "0.85rem",
+                                    }}
+                                  >
+                                    Subtotal: $
+                                    {weekData.weekTotal.toLocaleString()}
+                                  </span>
+                                </div>
+
+                                {/* Días de la semana (Viernes / Sábado) */}
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    gap: "4px",
+                                    paddingLeft: "10px",
+                                    borderLeft: "2px solid #444",
+                                  }}
+                                >
+                                  {weekData.days.map((day, dIndex) => (
+                                    <div
+                                      key={dIndex}
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        fontSize: "0.8rem",
+                                        color: "#aaaaaa",
+                                      }}
+                                    >
+                                      <span>
+                                        • {day.date} ({day.count} tragos)
+                                      </span>
+                                      <span style={{ color: "#fff" }}>
+                                        ${Number(day.total).toLocaleString()}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                    );
+                  },
+                )}
               </div>
             )}
           </div>
