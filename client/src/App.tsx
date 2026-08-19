@@ -23,7 +23,7 @@ export function App() {
       const response = await fetch(`${API_URL}/sales/history-summary`);
       if (response.ok) setHistorySummary(await response.json());
     } catch (error) {
-      console.error("Error al cargar el resumen histórico:", error);
+      console.error("Error histórico:", error);
     }
   };
 
@@ -33,23 +33,24 @@ export function App() {
         const response = await fetch(`${API_URL}/sales`);
         if (response.ok) {
           const data = await response.json();
-          const formattedSales: Sale[] = data.map((d: any) => ({
-            id: String(d.id),
-            date: new Date().toISOString(),
-            items: [
-              {
-                productId: d.id,
-                name: d.name,
-                price: d.price,
-                quantity: d.quantity,
-              },
-            ],
-            total: d.total,
-          }));
-          setSales(formattedSales);
+          setSales(
+            data.map((d: any) => ({
+              id: String(d.id),
+              date: new Date().toISOString(),
+              items: [
+                {
+                  productId: d.id,
+                  name: d.name,
+                  price: d.price,
+                  quantity: d.quantity,
+                },
+              ],
+              total: d.total,
+            })),
+          );
         }
       } catch (error) {
-        console.error("Error al cargar historial:", error);
+        console.error("Error ventas:", error);
       }
     };
     fetchSales();
@@ -107,14 +108,20 @@ export function App() {
   };
 
   const handleCloseDay = async () => {
-    if (window.confirm("¿Deseas finalizar el día y enviar el reporte?")) {
+    if (
+      window.confirm(
+        "¿Deseas finalizar el día y enviar el reporte a tu correo?",
+      )
+    ) {
       const response = await fetch(`${API_URL}/sales/close-day`, {
         method: "POST",
       });
       if (response.ok) {
-        alert("¡Reporte enviado!");
+        alert("¡Día finalizado y reporte enviado a tu correo con éxito!");
         setSales([]);
         fetchHistory();
+      } else {
+        alert("Hubo un error al enviar el reporte.");
       }
     }
   };
@@ -170,6 +177,7 @@ export function App() {
 
           <AddProductForm onRegisterSale={handleRegisterSale} />
 
+          {/* WIDGET HISTÓRICO ORIGINAL RESTAURADO */}
           <div
             style={{
               backgroundColor: "#1e1e1e",
@@ -177,17 +185,25 @@ export function App() {
               borderRadius: "12px",
               border: "1px solid #333",
               marginTop: "15px",
+              marginBottom: "15px",
             }}
           >
             <div
               style={{ cursor: "pointer" }}
               onClick={() => setShowHistoryWidget(!showHistoryWidget)}
             >
-              <h3 style={{ color: "#fff", margin: 0, textAlign: "center" }}>
+              <h3
+                style={{
+                  color: "#ffffff",
+                  margin: 0,
+                  fontSize: "1.05rem",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
                 📊 Resumen por Meses y Semanas {showHistoryWidget ? "▲" : "▼"}
               </h3>
             </div>
-
             {showHistoryWidget && (
               <div style={{ marginTop: "15px" }}>
                 {selectedWeek ? (
@@ -225,15 +241,18 @@ export function App() {
                               background: "none",
                               border: "none",
                               color: "#ff4757",
+                              fontWeight: "bold",
                             }}
                           >
                             ◀
                           </button>
-                          <span
-                            style={{ color: "#ff4757", fontWeight: "bold" }}
-                          >
-                            {currentMonthName?.toUpperCase()}
-                          </span>
+                          <div style={{ textAlign: "center" }}>
+                            <span
+                              style={{ color: "#ff4757", fontWeight: "bold" }}
+                            >
+                              📅 {currentMonthName?.toUpperCase()}
+                            </span>
+                          </div>
                           <button
                             onClick={() =>
                               setCurrentMonthIndex((p) =>
@@ -247,6 +266,7 @@ export function App() {
                               background: "none",
                               border: "none",
                               color: "#ff4757",
+                              fontWeight: "bold",
                             }}
                           >
                             ▶
@@ -277,19 +297,37 @@ export function App() {
                                 >
                                   {weekName}
                                 </span>
-                                <button
-                                  onClick={() => setSelectedWeek(weekData)}
+                                <div
                                   style={{
-                                    background: "#333",
-                                    color: "#00d2d3",
-                                    fontSize: "0.7rem",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
                                   }}
                                 >
-                                  📊 Ver gráficos
-                                </button>
+                                  <button
+                                    onClick={() => setSelectedWeek(weekData)}
+                                    style={{
+                                      background: "#333",
+                                      color: "#00d2d3",
+                                      fontSize: "0.7rem",
+                                      border: "1px solid #555",
+                                      borderRadius: "4px",
+                                      padding: "2px 6px",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    📊 Ver gráficos
+                                  </button>
+                                  <span
+                                    style={{
+                                      color: "#4caf50",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    Subtotal: $
+                                    {weekData.weekTotal.toLocaleString()}
+                                  </span>
+                                </div>
                               </div>
                               <div
                                 style={{
@@ -327,8 +365,19 @@ export function App() {
             )}
           </div>
         </div>
+
+        {/* LOGO DERECHA ORIGINAL */}
+        <div className={styles.logoContainer}>
+          <img
+            src={logoImg}
+            alt="El TintoBar Logo"
+            className={styles.brandLogo}
+          />
+        </div>
       </div>
+
       <SalesHistory sales={sales} onDeleteSale={handleDeleteSale} />
+
       <div
         style={{ textAlign: "center", marginTop: "30px", marginBottom: "40px" }}
       >
@@ -342,13 +391,13 @@ export function App() {
             fontWeight: "bold",
             border: "none",
             cursor: "pointer",
+            boxShadow: "0 4px 12px rgba(255, 71, 87, 0.3)",
           }}
         >
-          🏁 Finalizar Día
+          🏁 Finalizar Día y Enviar Reporte
         </button>
       </div>
     </div>
   );
 }
-
 export default App;
