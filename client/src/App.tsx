@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { WeekDetails } from "./components/WeekDetails/WeekDetails";
 import { AddProductForm } from "./components/AddProductForm/AddProductForm";
 import {
   SalesHistory,
@@ -20,6 +21,9 @@ export function App() {
 
   // Estado para alternar la visibilidad del widget de métricas históricas
   const [showHistoryWidget, setShowHistoryWidget] = useState(true);
+
+  // Estado para guardar la semana seleccionada para ver los gráficos detallados
+  const [selectedWeek, setSelectedWeek] = useState<any>(null);
 
   // Estado para el historial agrupado por Meses y Semanas
   const [historySummary, setHistorySummary] = useState<{
@@ -267,7 +271,12 @@ export function App() {
 
             {showHistoryWidget && (
               <div style={{ marginTop: "15px" }}>
-                {Object.keys(historySummary).length === 0 ? (
+                {selectedWeek ? (
+                  <WeekDetails
+                    weekData={selectedWeek}
+                    onBack={() => setSelectedWeek(null)}
+                  />
+                ) : Object.keys(historySummary).length === 0 ? (
                   <p
                     style={{
                       color: "#888888",
@@ -279,7 +288,6 @@ export function App() {
                   </p>
                 ) : (
                   (() => {
-                    // Invertimos las llaves para que el primer mes sea el más antiguo (ej. Junio -> Julio -> Agosto)
                     const monthsKeys = Object.keys(historySummary).reverse();
                     const safeIndex = Math.min(
                       currentMonthIndex,
@@ -294,7 +302,7 @@ export function App() {
 
                     return (
                       <div>
-                        {/* Barra de Navegación de Meses con Flechas en orden cronológico */}
+                        {/* Barra de Navegación de Meses con Flechas */}
                         <div
                           style={{
                             display: "flex",
@@ -391,11 +399,13 @@ export function App() {
                             ([weekName, weekData], wIndex) => (
                               <div
                                 key={wIndex}
+                                onClick={() => setSelectedWeek(weekData)}
                                 style={{
                                   backgroundColor: "#2a2a2a",
                                   padding: "10px",
                                   borderRadius: "6px",
                                   borderLeft: "4px solid #ff4757",
+                                  cursor: "pointer",
                                 }}
                               >
                                 <div
@@ -412,7 +422,7 @@ export function App() {
                                       fontSize: "0.85rem",
                                     }}
                                   >
-                                    {weekName}
+                                    {weekName} 📊 (Ver gráficos)
                                   </span>
                                   <span
                                     style={{
