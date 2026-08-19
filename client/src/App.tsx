@@ -15,6 +15,25 @@ export function App() {
   // 1. Iniciamos el estado vacío
   const [sales, setSales] = useState<Sale[]>([]);
 
+  // Estado para el historial de métricas
+  const [historySummary, setHistorySummary] = useState<{
+    totalClosedDays: number;
+    days: { date: string; total: number; count: number }[];
+  }>({ totalClosedDays: 0, days: [] });
+
+  // Función para cargar el resumen histórico
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch(`${API_URL}/sales/history-summary`);
+      if (response.ok) {
+        const data = await response.json();
+        setHistorySummary(data);
+      }
+    } catch (error) {
+      console.error("Error al cargar el resumen histórico:", error);
+    }
+  };
+
   // 2. GET: Cargamos las ventas del backend al abrir la app
   useEffect(() => {
     const fetchSales = async () => {
@@ -23,7 +42,6 @@ export function App() {
         if (response.ok) {
           const data = await response.json();
 
-          // Adaptamos los datos planos del backend al formato que usa tu componente SalesHistory
           const formattedSales: Sale[] = data.map((d: any) => ({
             id: String(d.id),
             date: new Date().toISOString(),
@@ -46,6 +64,7 @@ export function App() {
     };
 
     fetchSales();
+    fetchHistory();
   }, []);
 
   // 3. POST: Guardamos la nueva venta en NestJS
@@ -101,12 +120,10 @@ export function App() {
 
     if (confirmDelete) {
       try {
-        // 1. Enviamos la petición DELETE al backend
         const response = await fetch(`${API_URL}/sales/${id}`, {
           method: "DELETE",
         });
 
-        // 2. Si el servidor confirma el borrado, actualizamos el estado
         if (response.ok) {
           setSales((prevSales) => prevSales.filter((sale) => sale.id !== id));
         } else {
@@ -149,8 +166,8 @@ export function App() {
 
       if (response.ok) {
         alert("¡Día finalizado y reporte enviado a tu correo con éxito!");
-
         setSales([]);
+        fetchHistory(); // Actualizamos el widget histórico al cerrar el día
       } else {
         alert("Hubo un error al enviar el reporte.");
       }
@@ -202,6 +219,93 @@ export function App() {
           </div>
 
           <AddProductForm onRegisterSale={handleRegisterSale} />
+
+          {/* WIDGET DE MÉTRICAS HISTÓRICAS UBICADO EXACTAMENTE DONDE LO PEDISTE */}
+          <div
+            style={{
+              backgroundColor: "#1e1e1e",
+              padding: "18px",
+              borderRadius: "12px",
+              border: "1px solid #333333",
+              marginTop: "15px",
+              marginBottom: "15px",
+            }}
+          >
+            <h3
+              style={{
+                color: "#ffffff",
+                marginBottom: "12px",
+                fontSize: "1.05rem",
+                textAlign: "center",
+              }}
+            >
+              📊 Resumen de Jornadas Anteriores
+            </h3>
+
+            {historySummary.days.length === 0 ? (
+              <p
+                style={{
+                  color: "#888888",
+                  textAlign: "center",
+                  fontSize: "0.85rem",
+                }}
+              >
+                Aún no hay jornadas cerradas registradas.
+              </p>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                  maxHeight: "250px",
+                  overflowY: "auto",
+                }}
+              >
+                {historySummary.days.map((day, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "#2a2a2a",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      borderLeft: "4px solid #ff4757",
+                    }}
+                  >
+                    <div>
+                      <span
+                        style={{
+                          color: "#ffffff",
+                          fontWeight: "bold",
+                          fontSize: "0.9rem",
+                          display: "block",
+                        }}
+                      >
+                        📅 {day.date}
+                      </span>
+                      <span style={{ color: "#aaaaaa", fontSize: "0.8rem" }}>
+                        Vendidos: {day.count} un.
+                      </span>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <span
+                        style={{
+                          color: "#4caf50",
+                          fontWeight: "bold",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        ${Number(day.total).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className={styles.logoContainer}>
