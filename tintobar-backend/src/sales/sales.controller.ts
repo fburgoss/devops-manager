@@ -39,4 +39,9 @@ export class SalesController {
       };
     }
   }
+
+  @Get('history-summary')
+  async getHistorySummary() {
+    return this.salesService.getHistorySummary();
+  }
 }

@@ -62,4 +62,37 @@ export class SalesService {
         'Cierre de día realizado, correo enviado y registros guardados en el historial.',
     };
   }
+
+  // NUEVO MÉTODO: Obtener historial agrupado para el widget de métricas
+  async getHistorySummary() {
+    const closedSales = await this.salesRepository.find({
+      where: { closed: true },
+      order: { createdAt: 'DESC' },
+    });
+
+    // Agrupamos las ventas por fecha (Día) para sumar el total diario de cada fin de semana
+    const dailyMap: {
+      [key: string]: { date: string; total: number; count: number };
+    } = {};
+
+    closedSales.forEach((sale) => {
+      // Extraemos solo la fecha YYYY-MM-DD
+      const dateStr = new Date(sale.createdAt).toISOString().split('T')[0];
+
+      if (!dailyMap[dateStr]) {
+        dailyMap[dateStr] = { date: dateStr, total: 0, count: 0 };
+      }
+
+      dailyMap[dateStr].total += Number(sale.total);
+      dailyMap[dateStr].count += Number(sale.quantity);
+    });
+
+    // Convertimos el objeto en un array ordenado
+    const daysArray = Object.values(dailyMap);
+
+    return {
+      totalClosedDays: daysArray.length,
+      days: daysArray,
+    };
+  }
 }
