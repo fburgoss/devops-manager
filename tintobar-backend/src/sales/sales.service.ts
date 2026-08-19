@@ -69,86 +69,35 @@ export class SalesService {
       order: { createdAt: 'DESC' },
     });
 
-    // Objeto para agrupar por Mes -> Semana -> Días
-    const monthsMap: {
-      [monthName: string]: {
-        [weekName: string]: {
-          days: any[];
-          weekTotal: number;
-          weekCount: number;
-        };
-      };
-    } = {};
-
-    const monthNames = [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
-
-    // Primero agrupamos por fecha exacta para sumar tragos diarios
-    const dailyMap: {
-      [dateStr: string]: {
-        date: string;
-        total: number;
-        count: number;
-        monthIndex: number;
-        year: number;
-      };
-    } = {};
+    const summary: any = {};
 
     closedSales.forEach((sale) => {
-      const dateObj = new Date(sale.createdAt);
-      const dateStr = dateObj.toISOString().split('T')[0];
+      const date = new Date(sale.createdAt);
+      const month = `${date.toLocaleString('es-ES', { month: 'long' }).toUpperCase()} ${date.getFullYear()}`;
+      const week = `Semana ${Math.ceil(date.getDate() / 7)}`;
 
-      if (!dailyMap[dateStr]) {
-        dailyMap[dateStr] = {
-          date: dateStr,
-          total: 0,
-          count: 0,
-          monthIndex: dateObj.getMonth(),
-          year: dateObj.getFullYear(),
-        };
-      }
-      dailyMap[dateStr].total += Number(sale.total);
-      dailyMap[dateStr].count += Number(sale.quantity);
-    });
-
-    // Luego organizamos por Mes y calculamos la semana del mes
-    Object.values(dailyMap).forEach((dayData) => {
-      const d = new Date(dayData.date);
-      const monthName = `${monthNames[dayData.monthIndex]} ${dayData.year}`;
-
-      // Cálculo simple de la semana del mes basada en el número del día
-      const dayOfMonth = d.getDate();
-      const weekNumber = Math.ceil(dayOfMonth / 7);
-      const weekKey = `Semana ${weekNumber}`;
-
-      if (!monthsMap[monthName]) {
-        monthsMap[monthName] = {};
-      }
-      if (!monthsMap[monthName][weekKey]) {
-        monthsMap[monthName][weekKey] = {
-          days: [],
+      if (!summary[month]) summary[month] = {};
+      if (!summary[month][week]) {
+        summary[month][week] = {
           weekTotal: 0,
           weekCount: 0,
+          products: {}, // Aquí guardaremos el detalle: { 'Borgoña': { count: 5, total: 35000 } }
+          days: [],
         };
       }
 
-      monthsMap[monthName][weekKey].days.push(dayData);
-      monthsMap[monthName][weekKey].weekTotal += dayData.total;
-      monthsMap[monthName][weekKey].weekCount += dayData.count;
+      const weekData = summary[month][week];
+      weekData.weekTotal += Number(sale.total);
+      weekData.weekCount += Number(sale.quantity);
+
+      // Agrupamos por producto para los gráficos
+      if (!weekData.products[sale.name]) {
+        weekData.products[sale.name] = { count: 0, total: 0 };
+      }
+      weekData.products[sale.name].count += sale.quantity;
+      weekData.products[sale.name].total += Number(sale.total);
     });
 
-    return monthsMap;
+    return summary;
   }
 }
