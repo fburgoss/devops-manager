@@ -63,36 +63,92 @@ export class SalesService {
     };
   }
 
-  // NUEVO MÉTODO: Obtener historial agrupado para el widget de métricas
   async getHistorySummary() {
     const closedSales = await this.salesRepository.find({
       where: { closed: true },
       order: { createdAt: 'DESC' },
     });
 
-    // Agrupamos las ventas por fecha (Día) para sumar el total diario de cada fin de semana
+    // Objeto para agrupar por Mes -> Semana -> Días
+    const monthsMap: {
+      [monthName: string]: {
+        [weekName: string]: {
+          days: any[];
+          weekTotal: number;
+          weekCount: number;
+        };
+      };
+    } = {};
+
+    const monthNames = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ];
+
+    // Primero agrupamos por fecha exacta para sumar tragos diarios
     const dailyMap: {
-      [key: string]: { date: string; total: number; count: number };
+      [dateStr: string]: {
+        date: string;
+        total: number;
+        count: number;
+        monthIndex: number;
+        year: number;
+      };
     } = {};
 
     closedSales.forEach((sale) => {
-      // Extraemos solo la fecha YYYY-MM-DD
-      const dateStr = new Date(sale.createdAt).toISOString().split('T')[0];
+      const dateObj = new Date(sale.createdAt);
+      const dateStr = dateObj.toISOString().split('T')[0];
 
       if (!dailyMap[dateStr]) {
-        dailyMap[dateStr] = { date: dateStr, total: 0, count: 0 };
+        dailyMap[dateStr] = {
+          date: dateStr,
+          total: 0,
+          count: 0,
+          monthIndex: dateObj.getMonth(),
+          year: dateObj.getFullYear(),
+        };
       }
-
       dailyMap[dateStr].total += Number(sale.total);
       dailyMap[dateStr].count += Number(sale.quantity);
     });
 
-    // Convertimos el objeto en un array ordenado
-    const daysArray = Object.values(dailyMap);
+    // Luego organizamos por Mes y calculamos la semana del mes
+    Object.values(dailyMap).forEach((dayData) => {
+      const d = new Date(dayData.date);
+      const monthName = `${monthNames[dayData.monthIndex]} ${dayData.year}`;
 
-    return {
-      totalClosedDays: daysArray.length,
-      days: daysArray,
-    };
+      // Cálculo simple de la semana del mes basada en el número del día
+      const dayOfMonth = d.getDate();
+      const weekNumber = Math.ceil(dayOfMonth / 7);
+      const weekKey = `Semana ${weekNumber}`;
+
+      if (!monthsMap[monthName]) {
+        monthsMap[monthName] = {};
+      }
+      if (!monthsMap[monthName][weekKey]) {
+        monthsMap[monthName][weekKey] = {
+          days: [],
+          weekTotal: 0,
+          weekCount: 0,
+        };
+      }
+
+      monthsMap[monthName][weekKey].days.push(dayData);
+      monthsMap[monthName][weekKey].weekTotal += dayData.total;
+      monthsMap[monthName][weekKey].weekCount += dayData.count;
+    });
+
+    return monthsMap;
   }
 }
