@@ -130,7 +130,6 @@ export function App() {
     0,
   );
 
-  // 5. Función para Finalizar el Día y enviar el correo
   const handleCloseDay = async () => {
     if (
       !window.confirm(
@@ -146,14 +145,12 @@ export function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          totalSales: totalDailyRevenue,
-          salesCount: totalDailyDrinksSold,
-        }),
       });
 
       if (response.ok) {
         alert("¡Día finalizado y reporte enviado a tu correo con éxito!");
+
+        setSales([]);
       } else {
         alert("Hubo un error al enviar el reporte.");
       }
