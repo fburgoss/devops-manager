@@ -21,10 +21,7 @@ export function App() {
   const fetchHistory = async () => {
     try {
       const response = await fetch(`${API_URL}/sales/history-summary`);
-      if (response.ok) {
-        const data = await response.json();
-        setHistorySummary(data);
-      }
+      if (response.ok) setHistorySummary(await response.json());
     } catch (error) {
       console.error("Error al cargar el resumen histórico:", error);
     }
@@ -52,7 +49,7 @@ export function App() {
           setSales(formattedSales);
         }
       } catch (error) {
-        console.error("Error al cargar el historial:", error);
+        console.error("Error al cargar historial:", error);
       }
     };
     fetchSales();
@@ -144,11 +141,14 @@ export function App() {
         >
           <img
             src={logoImg}
-            alt="Logo"
+            alt="El TiintoBar Logo"
             style={{ width: "45px", height: "45px", objectFit: "contain" }}
           />
           <h1 className={styles.title}>El TiintoBar</h1>
         </div>
+        <p className={styles.subtitle}>
+          Control rápido de transacciones diarias
+        </p>
       </header>
 
       <div className={styles.mainLayout}>
@@ -180,22 +180,11 @@ export function App() {
             }}
           >
             <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                cursor: "pointer",
-              }}
+              style={{ cursor: "pointer" }}
               onClick={() => setShowHistoryWidget(!showHistoryWidget)}
             >
-              <h3
-                style={{
-                  color: "#fff",
-                  margin: 0,
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
-                📊 Resumen {showHistoryWidget ? "▲" : "▼"}
+              <h3 style={{ color: "#fff", margin: 0, textAlign: "center" }}>
+                📊 Resumen por Meses y Semanas {showHistoryWidget ? "▲" : "▼"}
               </h3>
             </div>
 
@@ -206,10 +195,6 @@ export function App() {
                     weekData={selectedWeek}
                     onBack={() => setSelectedWeek(null)}
                   />
-                ) : Object.keys(historySummary).length === 0 ? (
-                  <p style={{ color: "#888", textAlign: "center" }}>
-                    Sin jornadas cerradas.
-                  </p>
                 ) : (
                   (() => {
                     const monthsKeys = Object.keys(historySummary).reverse();
@@ -217,12 +202,7 @@ export function App() {
                       monthsKeys[
                         Math.min(currentMonthIndex, monthsKeys.length - 1)
                       ];
-                    const weeks = historySummary[currentMonthName];
-                    const monthTotal = Object.values(weeks).reduce(
-                      (acc: number, w: any) => acc + w.weekTotal,
-                      0,
-                    );
-
+                    const weeks = historySummary[currentMonthName] || {};
                     return (
                       <div>
                         <div
@@ -249,18 +229,11 @@ export function App() {
                           >
                             ◀
                           </button>
-                          <div style={{ textAlign: "center" }}>
-                            <div
-                              style={{ color: "#ff4757", fontWeight: "bold" }}
-                            >
-                              📅 {currentMonthName.toUpperCase()}
-                            </div>
-                            <div
-                              style={{ color: "#4caf50", fontSize: "0.85rem" }}
-                            >
-                              Total: ${monthTotal.toLocaleString()}
-                            </div>
-                          </div>
+                          <span
+                            style={{ color: "#ff4757", fontWeight: "bold" }}
+                          >
+                            {currentMonthName?.toUpperCase()}
+                          </span>
                           <button
                             onClick={() =>
                               setCurrentMonthIndex((p) =>
@@ -279,103 +252,73 @@ export function App() {
                             ▶
                           </button>
                         </div>
-
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "10px",
-                          }}
-                        >
-                          {Object.entries(weeks).map(
-                            ([weekName, weekData]: any, wIndex) => (
+                        {Object.entries(weeks).map(
+                          ([weekName, weekData]: any, i) => (
+                            <div
+                              key={i}
+                              style={{
+                                backgroundColor: "#2a2a2a",
+                                padding: "10px",
+                                borderRadius: "6px",
+                                marginBottom: "10px",
+                                borderLeft: "4px solid #ff4757",
+                              }}
+                            >
                               <div
-                                key={wIndex}
                                 style={{
-                                  backgroundColor: "#2a2a2a",
-                                  padding: "10px",
-                                  borderRadius: "6px",
-                                  borderLeft: "4px solid #ff4757",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginBottom: "6px",
                                 }}
                               >
-                                <div
+                                <span
+                                  style={{ color: "#fff", fontWeight: "bold" }}
+                                >
+                                  {weekName}
+                                </span>
+                                <button
+                                  onClick={() => setSelectedWeek(weekData)}
                                   style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    marginBottom: "6px",
+                                    background: "#333",
+                                    color: "#00d2d3",
+                                    fontSize: "0.7rem",
+                                    border: "none",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
                                   }}
                                 >
-                                  <span
-                                    style={{
-                                      color: "#fff",
-                                      fontWeight: "bold",
-                                    }}
-                                  >
-                                    {weekName}
-                                  </span>
+                                  📊 Ver gráficos
+                                </button>
+                              </div>
+                              <div
+                                style={{
+                                  borderLeft: "2px solid #444",
+                                  paddingLeft: "10px",
+                                }}
+                              >
+                                {weekData.days.map((day: any, j: number) => (
                                   <div
+                                    key={j}
                                     style={{
                                       display: "flex",
-                                      alignItems: "center",
-                                      gap: "8px",
+                                      justifyContent: "space-between",
+                                      fontSize: "0.8rem",
+                                      color: "#aaa",
                                     }}
                                   >
-                                    <button
-                                      onClick={() => setSelectedWeek(weekData)}
-                                      style={{
-                                        background: "#333",
-                                        border: "none",
-                                        color: "#00d2d3",
-                                        padding: "2px 6px",
-                                        borderRadius: "4px",
-                                        fontSize: "0.7rem",
-                                        cursor: "pointer",
-                                      }}
-                                    >
-                                      📊 Ver gráficos
-                                    </button>
-                                    <span
-                                      style={{
-                                        color: "#4caf50",
-                                        fontSize: "0.85rem",
-                                      }}
-                                    >
-                                      ${weekData.weekTotal.toLocaleString()}
+                                    <span>
+                                      • {day.date} ({day.count} tragos)
+                                    </span>
+                                    <span style={{ color: "#fff" }}>
+                                      ${Number(day.total).toLocaleString()}
                                     </span>
                                   </div>
-                                </div>
-                                <div
-                                  style={{
-                                    paddingLeft: "10px",
-                                    borderLeft: "2px solid #444",
-                                  }}
-                                >
-                                  {weekData.days.map(
-                                    (day: any, dIndex: number) => (
-                                      <div
-                                        key={dIndex}
-                                        style={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          fontSize: "0.8rem",
-                                          color: "#aaa",
-                                        }}
-                                      >
-                                        <span>
-                                          • {day.date} ({day.count} un.)
-                                        </span>
-                                        <span style={{ color: "#fff" }}>
-                                          ${Number(day.total).toLocaleString()}
-                                        </span>
-                                      </div>
-                                    ),
-                                  )}
-                                </div>
+                                ))}
                               </div>
-                            ),
-                          )}
-                        </div>
+                            </div>
+                          ),
+                        )}
                       </div>
                     );
                   })()
@@ -407,4 +350,5 @@ export function App() {
     </div>
   );
 }
+
 export default App;
