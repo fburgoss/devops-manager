@@ -26,16 +26,17 @@ export class SalesController {
   }
 
   @Post('close-day')
-  async closeDay(@Body() body: { totalSales: number; salesCount: number }) {
+  async closeDay() {
     try {
-      await this.mailService.sendReport(body.totalSales, body.salesCount);
-      return {
-        success: true,
-        message: 'Correo de cierre enviado exitosamente',
-      };
-    } catch (error) {
+      // Llamamos al método completo del servicio que calcula, envía el correo y archiva las ventas
+      const result = await this.salesService.closeDay();
+      return result;
+    } catch (error: any) {
       console.error(error);
-      return { success: false, message: 'Error al enviar el correo' };
+      return {
+        success: false,
+        message: error.message || 'Error al realizar el cierre',
+      };
     }
   }
 }

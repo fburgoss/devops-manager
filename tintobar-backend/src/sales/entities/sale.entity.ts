@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity('sales')
 export class Sale {
@@ -16,4 +21,10 @@ export class Sale {
 
   @Column('decimal', { precision: 10, scale: 2 })
   total!: number;
+
+  @Column({ default: false })
+  closed: boolean | undefined;
+
+  @CreateDateColumn()
+  createdAt: Date | undefined;
 }
