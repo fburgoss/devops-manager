@@ -2,7 +2,6 @@ import {
   BarChart,
   Bar,
   XAxis,
-  YAxis,
   Tooltip,
   ResponsiveContainer,
   PieChart,
@@ -71,7 +70,7 @@ export function WeekDetails({ weekData, onBack }: any) {
               outerRadius={60}
               label
             >
-              {productData.map((entry: any, index: number) => (
+              {productData.map((_, index: number) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
