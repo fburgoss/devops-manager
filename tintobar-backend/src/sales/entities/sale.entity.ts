@@ -23,8 +23,8 @@ export class Sale {
   total!: number;
 
   @Column({ default: false })
-  closed: boolean | undefined;
+  closed!: boolean;
 
   @CreateDateColumn()
-  createdAt: Date | undefined;
+  createdAt!: Date;
 }
