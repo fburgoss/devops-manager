@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SalesModule } from './sales/sales.module'; // 1. Agrega esta línea
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { SalesModule } from './sales/sales.module'; // 1. Agrega esta línea
       synchronize: true,
       ssl: { rejectUnauthorized: false },
     }),
-    SalesModule, // 2. Agrega esta línea aquí
+    SalesModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
