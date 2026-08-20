@@ -219,6 +219,15 @@ export function App() {
                         Math.min(currentMonthIndex, monthsKeys.length - 1)
                       ];
                     const weeks = historySummary[currentMonthName] || {};
+
+                    {
+                      /* Cálculo exacto del Total del Mes */
+                    }
+                    const monthTotal = Object.values(weeks).reduce(
+                      (acc: number, w: any) => acc + (Number(w.weekTotal) || 0),
+                      0,
+                    );
+
                     return (
                       <div>
                         <div
@@ -248,9 +257,23 @@ export function App() {
                           </button>
                           <div style={{ textAlign: "center" }}>
                             <span
-                              style={{ color: "#ff4757", fontWeight: "bold" }}
+                              style={{
+                                color: "#ff4757",
+                                fontWeight: "bold",
+                                display: "block",
+                              }}
                             >
                               📅 {currentMonthName?.toUpperCase()}
+                            </span>
+                            {/* AQUÍ ESTÁ EL TOTAL DEL MES QUE FALTABA */}
+                            <span
+                              style={{
+                                color: "#4caf50",
+                                fontSize: "0.85rem",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Total Mes: ${monthTotal.toLocaleString()}
                             </span>
                           </div>
                           <button
@@ -307,6 +330,8 @@ export function App() {
                                   {weekData.weekTotal.toLocaleString()}
                                 </span>
                               </div>
+
+                              {/* AQUÍ ESTÁ EL LISTADO DE LOS DÍAS QUE FALTABA */}
                               <div
                                 style={{
                                   borderLeft: "2px solid #444",
