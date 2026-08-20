@@ -1,11 +1,9 @@
 .container {
   background-color: #1e1e1e;
-  padding: 18px;
-  border-radius: 12px;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 32px;
   border: 1px solid #333;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  box-sizing: border-box;
 }
 
 .header {
