@@ -2,9 +2,11 @@
   background-color: #1e1e1e;
   padding: 20px;
   border-radius: 8px;
-  margin-bottom: 30px;
-  max-width: 600px;
+  margin-bottom: 8px;
+  width: 100%;
+  max-width: 100%;
   border: 1px solid #333;
+  box-sizing: border-box;
 }
 
 .title {
@@ -54,16 +56,4 @@
 
 .btnSubmit:hover {
   background-color: #d62839;
-}
-
-.formContainer {
-  background-color: #1e1e1e; /* Tu color de fondo actual */
-  padding: 24px;
-  border-radius: 8px;
-  border: 1px solid #333;
-
-  /* 👇 ESTAS 3 LÍNEAS SON LA CLAVE 👇 */
-  width: 100%;
-  max-width: 100%; /* Por si tenías un max-width: 500px o similar antes */
-  box-sizing: border-box;
 }
