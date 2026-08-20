@@ -307,6 +307,7 @@ export function App() {
                                 borderLeft: "4px solid #ff4757",
                               }}
                             >
+                              {/* Cabecera de la semana (Nombre, Botón Gráficos y Subtotal) */}
                               <div
                                 style={{
                                   display: "flex",
@@ -320,18 +321,43 @@ export function App() {
                                 >
                                   {weekName}
                                 </span>
-                                <span
+
+                                <div
                                   style={{
-                                    color: "#4caf50",
-                                    fontWeight: "bold",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px",
                                   }}
                                 >
-                                  Subtotal: $
-                                  {weekData.weekTotal.toLocaleString()}
-                                </span>
+                                  {/* Botón para ver los gráficos detallados */}
+                                  <button
+                                    onClick={() => setSelectedWeek(weekData)}
+                                    style={{
+                                      background: "#333",
+                                      border: "1px solid #555",
+                                      color: "#00d2d3",
+                                      borderRadius: "4px",
+                                      padding: "2px 6px",
+                                      fontSize: "0.7rem",
+                                      cursor: "pointer",
+                                    }}
+                                  >
+                                    📊 Ver gráficos
+                                  </button>
+
+                                  <span
+                                    style={{
+                                      color: "#4caf50",
+                                      fontWeight: "bold",
+                                    }}
+                                  >
+                                    Subtotal: $
+                                    {weekData.weekTotal.toLocaleString()}
+                                  </span>
+                                </div>
                               </div>
 
-                              {/* AQUÍ ESTÁ EL LISTADO DE LOS DÍAS QUE FALTABA */}
+                              {/* Listado detallado de los días de la semana */}
                               <div
                                 style={{
                                   borderLeft: "2px solid #444",
