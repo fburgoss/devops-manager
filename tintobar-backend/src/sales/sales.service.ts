@@ -81,8 +81,8 @@ export class SalesService {
         summary[month][week] = {
           weekTotal: 0,
           weekCount: 0,
-          products: {}, // Aquí guardaremos el detalle: { 'Borgoña': { count: 5, total: 35000 } }
-          days: [],
+          products: {},
+          days: [], // Aquí guardaremos el desglose diario
         };
       }
 
@@ -96,6 +96,18 @@ export class SalesService {
       }
       weekData.products[sale.name].count += sale.quantity;
       weekData.products[sale.name].total += Number(sale.total);
+
+      // --- AQUÍ ESTÁ LO QUE FALTABA: LLENAR EL ARRAY DE DÍAS ---
+      const dateString = date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+      let dayEntry = weekData.days.find((d: any) => d.date === dateString);
+
+      if (!dayEntry) {
+        dayEntry = { date: dateString, count: 0, total: 0 };
+        weekData.days.push(dayEntry);
+      }
+
+      dayEntry.count += sale.quantity;
+      dayEntry.total += Number(sale.total);
     });
 
     return summary;
