@@ -72,7 +72,12 @@ export class SalesService {
     const summary: any = {};
 
     closedSales.forEach((sale) => {
+      // Validamos que la fecha exista
+      if (!sale.createdAt) return;
+
       const date = new Date(sale.createdAt);
+      if (isNaN(date.getTime())) return; // Si la fecha es inválida, la ignoramos para que no caiga el servidor
+
       const month = `${date.toLocaleString('es-ES', { month: 'long' }).toUpperCase()} ${date.getFullYear()}`;
       const week = `Semana ${Math.ceil(date.getDate() / 7)}`;
 
@@ -82,7 +87,7 @@ export class SalesService {
           weekTotal: 0,
           weekCount: 0,
           products: {},
-          days: [], // Aquí guardaremos el desglose diario
+          days: [],
         };
       }
 
@@ -97,17 +102,21 @@ export class SalesService {
       weekData.products[sale.name].count += sale.quantity;
       weekData.products[sale.name].total += Number(sale.total);
 
-      // --- AQUÍ ESTÁ LO QUE FALTABA: LLENAR EL ARRAY DE DÍAS ---
-      const dateString = date.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-      let dayEntry = weekData.days.find((d: any) => d.date === dateString);
+      // Llenado de días seguro
+      try {
+        const dateString = date.toISOString().split('T')[0];
+        let dayEntry = weekData.days.find((d: any) => d.date === dateString);
 
-      if (!dayEntry) {
-        dayEntry = { date: dateString, count: 0, total: 0 };
-        weekData.days.push(dayEntry);
+        if (!dayEntry) {
+          dayEntry = { date: dateString, count: 0, total: 0 };
+          weekData.days.push(dayEntry);
+        }
+
+        dayEntry.count += sale.quantity;
+        dayEntry.total += Number(sale.total);
+      } catch (e) {
+        console.error('Error procesando fecha de venta:', e);
       }
-
-      dayEntry.count += sale.quantity;
-      dayEntry.total += Number(sale.total);
     });
 
     return summary;
