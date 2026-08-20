@@ -21,7 +21,11 @@ export function App() {
   const fetchHistory = async () => {
     try {
       const response = await fetch(`${API_URL}/sales/history-summary`);
-      if (response.ok) setHistorySummary(await response.json());
+      if (response.ok) {
+        const data = await response.json();
+        console.log("ESTO LLEGA DEL BACKEND:", data); // <--- Agrega esto
+        setHistorySummary(data);
+      }
     } catch (error) {
       console.error("Error histórico:", error);
     }
