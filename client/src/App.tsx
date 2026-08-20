@@ -299,6 +299,7 @@ export function App() {
                             ▶
                           </button>
                         </div>
+
                         {Object.entries(weeks).map(
                           ([weekName, weekData]: any, i) => (
                             <div
@@ -311,7 +312,7 @@ export function App() {
                                 borderLeft: "4px solid #ff4757",
                               }}
                             >
-                              {/* Cabecera de la semana (Nombre, Botón Gráficos y Subtotal) */}
+                              {/* Fila superior: Nombre de semana, botón de gráficos y subtotal */}
                               <div
                                 style={{
                                   display: "flex",
@@ -333,7 +334,6 @@ export function App() {
                                     gap: "10px",
                                   }}
                                 >
-                                  {/* Botón para ver los gráficos detallados */}
                                   <button
                                     onClick={() => setSelectedWeek(weekData)}
                                     style={{
@@ -361,7 +361,7 @@ export function App() {
                                 </div>
                               </div>
 
-                              {/* Listado detallado de los días de la semana */}
+                              {/* ESTE ES EL MAPEO DE LOS DÍAS QUE PINTA LAS FECHAS Y MONTOS */}
                               <div
                                 style={{
                                   borderLeft: "2px solid #444",
@@ -369,25 +369,26 @@ export function App() {
                                   marginTop: "8px",
                                 }}
                               >
-                                {weekData.days.map((day: any, j: number) => (
-                                  <div
-                                    key={j}
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      fontSize: "0.8rem",
-                                      color: "#aaa",
-                                      marginBottom: "2px",
-                                    }}
-                                  >
-                                    <span>
-                                      • {day.date} ({day.count} tragos)
-                                    </span>
-                                    <span style={{ color: "#fff" }}>
-                                      ${Number(day.total).toLocaleString()}
-                                    </span>
-                                  </div>
-                                ))}
+                                {weekData.days &&
+                                  weekData.days.map((day: any, j: number) => (
+                                    <div
+                                      key={j}
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        fontSize: "0.8rem",
+                                        color: "#aaa",
+                                        marginBottom: "2px",
+                                      }}
+                                    >
+                                      <span>
+                                        • {day.date} ({day.count} tragos)
+                                      </span>
+                                      <span style={{ color: "#fff" }}>
+                                        ${Number(day.total).toLocaleString()}
+                                      </span>
+                                    </div>
+                                  ))}
                               </div>
                             </div>
                           ),
