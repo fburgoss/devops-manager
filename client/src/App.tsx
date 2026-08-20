@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { WeekDetails } from "./components/WeekDetails/WeekDetails";
 import { AddProductForm } from "./components/AddProductForm/AddProductForm";
+import InventoryCard from "./components/Inventory/InventoryCard";
 import {
   SalesHistory,
   type Sale,
@@ -23,7 +24,6 @@ export function App() {
       const response = await fetch(`${API_URL}/sales/history-summary`);
       if (response.ok) {
         const data = await response.json();
-        console.log("ESTO LLEGA DEL BACKEND:", data); // <--- Agrega esto
         setHistorySummary(data);
       }
     } catch (error) {
@@ -181,7 +181,10 @@ export function App() {
 
           <AddProductForm onRegisterSale={handleRegisterSale} />
 
-          {/* WIDGET HISTÓRICO ORIGINAL RESTAURADO */}
+          {/* Tarjeta de Inventario conectada */}
+          <InventoryCard apiUrl={API_URL} />
+
+          {/* WIDGET HISTÓRICO */}
           <div
             style={{
               backgroundColor: "#1e1e1e",
@@ -224,9 +227,6 @@ export function App() {
                       ];
                     const weeks = historySummary[currentMonthName] || {};
 
-                    {
-                      /* Cálculo exacto del Total del Mes */
-                    }
                     const monthTotal = Object.values(weeks).reduce(
                       (acc: number, w: any) => acc + (Number(w.weekTotal) || 0),
                       0,
@@ -269,7 +269,6 @@ export function App() {
                             >
                               📅 {currentMonthName?.toUpperCase()}
                             </span>
-                            {/* AQUÍ ESTÁ EL TOTAL DEL MES QUE FALTABA */}
                             <span
                               style={{
                                 color: "#4caf50",
@@ -312,7 +311,6 @@ export function App() {
                                 borderLeft: "4px solid #ff4757",
                               }}
                             >
-                              {/* Fila superior: Nombre de semana, botón de gráficos y subtotal */}
                               <div
                                 style={{
                                   display: "flex",
@@ -361,7 +359,6 @@ export function App() {
                                 </div>
                               </div>
 
-                              {/* ESTE ES EL MAPEO DE LOS DÍAS QUE PINTA LAS FECHAS Y MONTOS */}
                               <div
                                 style={{
                                   borderLeft: "2px solid #444",
@@ -402,7 +399,6 @@ export function App() {
           </div>
         </div>
 
-        {/* LOGO DERECHA ORIGINAL */}
         <div className={styles.logoContainer}>
           <img
             src={logoImg}
