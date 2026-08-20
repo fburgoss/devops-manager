@@ -4,19 +4,56 @@ import { Repository } from 'typeorm';
 import { Sale } from './entities/sale.entity';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { MailService } from '../mail/mail.service';
+import { Inventory } from '../inventory/entities/inventory.entity'; // <--- Importado
 
 @Injectable()
 export class SalesService {
   constructor(
     @InjectRepository(Sale)
     private readonly salesRepository: Repository<Sale>,
-    private readonly mailService: MailService, // Inyectamos el servicio de correo
+    @InjectRepository(Inventory) // <--- Inyectado aquí sin tocar lo demás
+    private readonly inventoryRepository: Repository<Inventory>,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createSaleDto: CreateSaleDto): Promise<Sale> {
     const newSale = this.salesRepository.create(createSaleDto);
     const savedSale = await this.salesRepository.save(newSale);
     console.log('✅ Nueva venta guardada en la Base de Datos:', savedSale);
+
+    // --- LÓGICA DE DESCUENTO AUTOMÁTICO DE STOCK ---
+    try {
+      const nombreVenta = savedSale.name.toLowerCase();
+
+      // 1. ¡TODAS las ventas descuentan stickers automáticamente!
+      const sticker = await this.inventoryRepository.findOneBy({
+        name: 'Stickers',
+      });
+      if (sticker && sticker.quantity > 0) {
+        sticker.quantity -= savedSale.quantity;
+        await this.inventoryRepository.save(sticker);
+        console.log('📉 Stock actualizado: Stickers restados.');
+      }
+
+      // 2. Si la venta incluye un vaso de litro o formato grande
+      if (nombreVenta.includes('litro') || nombreVenta.includes('vaso')) {
+        const vaso = await this.inventoryRepository.findOneBy({
+          name: 'Vasos 1.5L',
+        });
+        if (vaso && vaso.quantity > 0) {
+          vaso.quantity -= savedSale.quantity;
+          await this.inventoryRepository.save(vaso);
+          console.log('📉 Stock actualizado: Vasos 1.5L restados.');
+        }
+      }
+    } catch (error) {
+      console.error(
+        '⚠️ Error al descontar el inventario automáticamente:',
+        error,
+      );
+    }
+    // --------------------------------------------------
+
     return savedSale;
   }
 
