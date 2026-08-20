@@ -121,4 +121,5 @@ export class SalesService {
 
     return summary;
   }
+  // Actualización forzada
 }
