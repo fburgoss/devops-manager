@@ -24,6 +24,15 @@ export class SalesService {
     // --- LÓGICA DE DESCUENTO AUTOMÁTICO DE STOCK ---
     try {
       const nombreVenta = savedSale.name.toLowerCase();
+      // Si guardas el formato en el nombre o si mandas información extra, lo detectamos aquí:
+      // (Asumiendo que el nombre o el precio nos dicen qué formato es)
+
+      // Verificamos si es medio litro por el nombre o si el precio es el de medio litro (ej. 4000)
+      const esMedioLitro =
+        nombreVenta.includes('medio') ||
+        nombreVenta.includes('0.5') ||
+        nombreVenta.includes('500') ||
+        Number(savedSale.price) === 4000; // Ajusta este precio si el de medio litro vale 4000
 
       // 1. Descontar Stickers en TODAS las ventas
       const sticker = await this.inventoryRepository.findOneBy({
@@ -32,15 +41,10 @@ export class SalesService {
       if (sticker) {
         sticker.quantity = Math.max(0, sticker.quantity - savedSale.quantity);
         await this.inventoryRepository.save(sticker);
-        console.log('📉 Stickers restados con éxito.');
       }
 
-      // 2. Descontar Vasos según el formato de la venta
-      if (
-        nombreVenta.includes('medio') ||
-        nombreVenta.includes('0.5') ||
-        nombreVenta.includes('500')
-      ) {
+      // 2. Descontar Vasos según corresponda
+      if (esMedioLitro) {
         const vasoMedio = await this.inventoryRepository.findOneBy({
           name: 'Vasos 0.5L (Medio Litro)',
         });
@@ -50,10 +54,8 @@ export class SalesService {
             vasoMedio.quantity - savedSale.quantity,
           );
           await this.inventoryRepository.save(vasoMedio);
-          console.log('📉 Vaso de 0.5L restado con éxito.');
         }
       } else {
-        // Por defecto para formato de 1 Litro (como la Borgoña)
         const vasoLitro = await this.inventoryRepository.findOneBy({
           name: 'Vasos 1L (Litro)',
         });
@@ -63,7 +65,6 @@ export class SalesService {
             vasoLitro.quantity - savedSale.quantity,
           );
           await this.inventoryRepository.save(vasoLitro);
-          console.log('📉 Vaso de 1L restado con éxito.');
         }
       }
     } catch (error) {
