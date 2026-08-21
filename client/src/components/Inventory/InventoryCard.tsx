@@ -10,12 +10,16 @@ interface InventoryItem {
 
 interface InventoryCardProps {
   apiUrl: string;
+  refreshTrigger?: number; // <--- 1. Agregamos esto opcional
 }
 
-export default function InventoryCard({ apiUrl }: InventoryCardProps) {
+export default function InventoryCard({
+  apiUrl,
+  refreshTrigger,
+}: InventoryCardProps) {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isOpen, setIsOpen] = useState<boolean>(true); // Estado para abrir y cerrar
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   const fetchInventory = async () => {
     try {
@@ -29,9 +33,10 @@ export default function InventoryCard({ apiUrl }: InventoryCardProps) {
     }
   };
 
+  // 2. Agregamos "refreshTrigger" en las dependencias del useEffect
   useEffect(() => {
     fetchInventory();
-  }, [apiUrl]);
+  }, [apiUrl, refreshTrigger]);
 
   const handleUpdateStock = async (
     id: number,
@@ -58,7 +63,6 @@ export default function InventoryCard({ apiUrl }: InventoryCardProps) {
 
   return (
     <div className={styles.container}>
-      {/* Cabecera con clic para colapsar / expandir */}
       <div className={styles.header} onClick={() => setIsOpen(!isOpen)}>
         <h3 className={styles.title}>
           📦 Control de Insumos {isOpen ? "▲" : "▼"}

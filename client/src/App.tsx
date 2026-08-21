@@ -18,6 +18,7 @@ export function App() {
   const [showHistoryWidget, setShowHistoryWidget] = useState(true);
   const [selectedWeek, setSelectedWeek] = useState<any>(null);
   const [historySummary, setHistorySummary] = useState<any>({});
+  const [inventoryRefreshKey, setInventoryRefreshKey] = useState(0);
 
   const fetchHistory = async () => {
     try {
@@ -96,6 +97,7 @@ export function App() {
             total: savedSale.total,
           },
         ]);
+        setInventoryRefreshKey((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Error al guardar:", error);
@@ -182,7 +184,10 @@ export function App() {
           <AddProductForm onRegisterSale={handleRegisterSale} />
 
           {/* Tarjeta de Inventario conectada */}
-          <InventoryCard apiUrl={API_URL} />
+          <InventoryCard
+            apiUrl={API_URL}
+            refreshTrigger={inventoryRefreshKey}
+          />
 
           {/* WIDGET HISTÓRICO */}
           <div
