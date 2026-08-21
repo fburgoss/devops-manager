@@ -25,32 +25,49 @@ export class SalesService {
     try {
       const nombreVenta = savedSale.name.toLowerCase();
 
-      // 1. ¡TODAS las ventas descuentan stickers automáticamente!
+      // 1. Descontar Stickers en TODAS las ventas
       const sticker = await this.inventoryRepository.findOneBy({
         name: 'Stickers',
       });
-      if (sticker && sticker.quantity > 0) {
-        sticker.quantity -= savedSale.quantity;
+      if (sticker) {
+        sticker.quantity = Math.max(0, sticker.quantity - savedSale.quantity);
         await this.inventoryRepository.save(sticker);
-        console.log('📉 Stock actualizado: Stickers restados.');
+        console.log('📉 Stickers restados con éxito.');
       }
 
-      // 2. Si la venta incluye un vaso de litro o formato grande
-      if (nombreVenta.includes('litro') || nombreVenta.includes('vaso')) {
-        const vaso = await this.inventoryRepository.findOneBy({
-          name: 'Vasos 1.5L',
+      // 2. Descontar Vasos según el formato de la venta
+      if (
+        nombreVenta.includes('medio') ||
+        nombreVenta.includes('0.5') ||
+        nombreVenta.includes('500')
+      ) {
+        const vasoMedio = await this.inventoryRepository.findOneBy({
+          name: 'Vasos 0.5L (Medio Litro)',
         });
-        if (vaso && vaso.quantity > 0) {
-          vaso.quantity -= savedSale.quantity;
-          await this.inventoryRepository.save(vaso);
-          console.log('📉 Stock actualizado: Vasos 1.5L restados.');
+        if (vasoMedio) {
+          vasoMedio.quantity = Math.max(
+            0,
+            vasoMedio.quantity - savedSale.quantity,
+          );
+          await this.inventoryRepository.save(vasoMedio);
+          console.log('📉 Vaso de 0.5L restado con éxito.');
+        }
+      } else {
+        // Por defecto para formato de 1 Litro (como la Borgoña)
+        const vasoLitro = await this.inventoryRepository.findOneBy({
+          name: 'Vasos 1L (Litro)',
+        });
+        if (vasoLitro) {
+          vasoLitro.quantity = Math.max(
+            0,
+            vasoLitro.quantity - savedSale.quantity,
+          );
+          await this.inventoryRepository.save(vasoLitro);
+          console.log('📉 Vaso de 1L restado con éxito.');
         }
       }
     } catch (error) {
-      console.error(
-        '⚠️ Error al descontar el inventario automáticamente:',
-        error,
-      );
+      console.error('⚠️ Error al descontar inventario:', error);
     }
     // --------------------------------------------------
 
