@@ -3,4 +3,5 @@ export class CreateSaleDto {
   price!: number;
   quantity!: number;
   total!: number;
+  size?: string;
 }

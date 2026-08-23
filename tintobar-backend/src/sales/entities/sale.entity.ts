@@ -25,6 +25,9 @@ export class Sale {
   @Column({ default: false })
   closed!: boolean;
 
+  @Column({ nullable: true })
+  size!: string;
+
   @CreateDateColumn()
   createdAt!: Date;
 }

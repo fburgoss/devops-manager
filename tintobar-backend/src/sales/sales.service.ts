@@ -4,37 +4,35 @@ import { Repository } from 'typeorm';
 import { Sale } from './entities/sale.entity';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { MailService } from '../mail/mail.service';
-import { Inventory } from '../inventory/entities/inventory.entity'; // <--- Importado
+import { Inventory } from '../inventory/entities/inventory.entity';
 
 @Injectable()
 export class SalesService {
   constructor(
     @InjectRepository(Sale)
     private readonly salesRepository: Repository<Sale>,
-    @InjectRepository(Inventory) // <--- Inyectado aquí sin tocar lo demás
+    @InjectRepository(Inventory)
     private readonly inventoryRepository: Repository<Inventory>,
     private readonly mailService: MailService,
   ) {}
 
   async create(createSaleDto: CreateSaleDto): Promise<Sale> {
-    const newSale = this.salesRepository.create(createSaleDto);
+    const newSale = this.salesRepository.create({
+      name: createSaleDto.name,
+      price: createSaleDto.price,
+      quantity: createSaleDto.quantity,
+      total: createSaleDto.price * createSaleDto.quantity,
+      size: createSaleDto.size,
+    });
     const savedSale = await this.salesRepository.save(newSale);
     console.log('✅ Nueva venta guardada en la Base de Datos:', savedSale);
 
-    // --- LÓGICA DE DESCUENTO AUTOMÁTICO DE STOCK ---
     try {
-      const nombreVenta = savedSale.name.toLowerCase();
-      // Si guardas el formato en el nombre o si mandas información extra, lo detectamos aquí:
-      // (Asumiendo que el nombre o el precio nos dicen qué formato es)
+      const esMedioLitro = savedSale.size
+        ? savedSale.size.toLowerCase().includes('medio') ||
+          savedSale.size.includes('0.5')
+        : Number(savedSale.price) === 4000;
 
-      // Verificamos si es medio litro por el nombre o si el precio es el de medio litro (ej. 4000)
-      const esMedioLitro =
-        nombreVenta.includes('medio') ||
-        nombreVenta.includes('0.5') ||
-        nombreVenta.includes('500') ||
-        Number(savedSale.price) === 4000; // Ajusta este precio si el de medio litro vale 4000
-
-      // 1. Descontar Stickers en TODAS las ventas
       const sticker = await this.inventoryRepository.findOneBy({
         name: 'Stickers',
       });
@@ -43,7 +41,6 @@ export class SalesService {
         await this.inventoryRepository.save(sticker);
       }
 
-      // 2. Descontar Vasos según corresponda
       if (esMedioLitro) {
         const vasoMedio = await this.inventoryRepository.findOneBy({
           name: 'Vasos 0.5L (Medio Litro)',
@@ -70,13 +67,11 @@ export class SalesService {
     } catch (error) {
       console.error('⚠️ Error al descontar inventario:', error);
     }
-    // --------------------------------------------------
 
     return savedSale;
   }
 
   async findAll(): Promise<Sale[]> {
-    // CAMBIO CLAVE: Solo traemos las ventas que NO han sido cerradas (el día actual)
     return await this.salesRepository.find({
       where: { closed: false },
       order: { createdAt: 'DESC' },
@@ -87,9 +82,7 @@ export class SalesService {
     await this.salesRepository.delete(id);
   }
 
-  // NUEVO MÉTODO: Cierra el día, envía el correo y marca las ventas como históricas
   async closeDay(): Promise<{ success: boolean; message: string }> {
-    // 1. Buscamos solo las ventas activas del día actual
     const activeSales = await this.salesRepository.find({
       where: { closed: false },
     });
@@ -98,17 +91,17 @@ export class SalesService {
       throw new Error('No hay ventas activas para cerrar en este día.');
     }
 
-    // 2. Calculamos totales
     const totalSales = activeSales.reduce(
       (acc, sale) => acc + Number(sale.total),
       0,
     );
-    const salesCount = activeSales.length;
+    // Sumamos la cantidad de cada registro en lugar de contar las filas
+    const salesCount = activeSales.reduce(
+      (acc, sale) => acc + Number(sale.quantity),
+      0,
+    );
 
-    // 3. Enviamos el correo usando tu plantilla de Resend
     await this.mailService.sendReport(totalSales, salesCount);
-
-    // 4. Marcamos las ventas como cerradas (NO se borran, pasan al historial permanente)
     await this.salesRepository.update({ closed: false }, { closed: true });
 
     return {
@@ -124,14 +117,14 @@ export class SalesService {
       order: { createdAt: 'DESC' },
     });
 
+    // 1. Declaramos la variable summary que faltaba
     const summary: any = {};
 
     closedSales.forEach((sale) => {
-      // Validamos que la fecha exista
       if (!sale.createdAt) return;
 
       const date = new Date(sale.createdAt);
-      if (isNaN(date.getTime())) return; // Si la fecha es inválida, la ignoramos para que no caiga el servidor
+      if (isNaN(date.getTime())) return;
 
       const month = `${date.toLocaleString('es-ES', { month: 'long' }).toUpperCase()} ${date.getFullYear()}`;
       const week = `Semana ${Math.ceil(date.getDate() / 7)}`;
@@ -142,6 +135,7 @@ export class SalesService {
           weekTotal: 0,
           weekCount: 0,
           products: {},
+          sizes: {},
           days: [],
         };
       }
@@ -150,14 +144,18 @@ export class SalesService {
       weekData.weekTotal += Number(sale.total);
       weekData.weekCount += Number(sale.quantity);
 
-      // Agrupamos por producto para los gráficos
       if (!weekData.products[sale.name]) {
         weekData.products[sale.name] = { count: 0, total: 0 };
       }
       weekData.products[sale.name].count += sale.quantity;
       weekData.products[sale.name].total += Number(sale.total);
 
-      // Llenado de días seguro
+      const saleSize = sale.size || '1 Litro';
+      if (!weekData.sizes[saleSize]) {
+        weekData.sizes[saleSize] = 0;
+      }
+      weekData.sizes[saleSize] += sale.quantity;
+
       try {
         const dateString = date.toISOString().split('T')[0];
         let dayEntry = weekData.days.find((d: any) => d.date === dateString);
@@ -176,5 +174,4 @@ export class SalesService {
 
     return summary;
   }
-  // Actualización forzada
 }
