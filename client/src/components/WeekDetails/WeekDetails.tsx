@@ -23,22 +23,38 @@ export function WeekDetails({ weekData, onBack }: any) {
   const sortedByCount = [...productData].sort((a, b) => b.count - a.count);
   const topProduct = sortedByCount[0] || { name: "N/A", count: 0 };
 
-  // Datos simulados/calculados para los tamaños (1 Litro y Medio Litro como en tu diseño)
+  // --- LÓGICA DE TAMAÑOS REALES ---
   const totalUnits = weekData.weekCount || 0;
+
+  // Leemos directamente del objeto sizes que manda el backend
+  const qtyLitro = weekData.sizes?.["1 Litro"] || 0;
+  const qtyMedio = weekData.sizes?.["Medio Litro"] || 0;
+
+  // Calculamos los porcentajes reales
+  const percLitro =
+    totalUnits > 0 ? Math.round((qtyLitro / totalUnits) * 100) : 0;
+  const percMedio =
+    totalUnits > 0 ? Math.round((qtyMedio / totalUnits) * 100) : 0;
+
   const sizeData = [
     {
       name: "1 Litro",
-      value: Math.round(totalUnits * 0.7) || 0,
+      value: qtyLitro,
       color: "#00d2d3",
+      percentage: percLitro,
     },
     {
       name: "Medio Litro",
-      value: Math.round(totalUnits * 0.3) || 0,
+      value: qtyMedio,
       color: "#10ac84",
+      percentage: percMedio,
     },
   ];
 
-  // Colores para las barras de tragos (Rojo, Calipso, Amarillo, Morado)
+  // Identificar el tamaño más vendido real para la tarjeta
+  const topSize = qtyLitro >= qtyMedio ? sizeData[0] : sizeData[1];
+
+  // Colores para las barras de tragos
   const BAR_COLORS = ["#ff4757", "#00d2d3", "#feca57", "#5f27cd"];
 
   return (
@@ -162,7 +178,7 @@ export function WeekDetails({ weekData, onBack }: any) {
             backgroundColor: "#1e1e1e",
             padding: "10px",
             borderRadius: "8px",
-            borderLeft: "3px solid #00d2d3",
+            borderLeft: `3px solid ${topSize.color}`,
           }}
         >
           <div style={{ fontSize: "0.7rem", color: "#888" }}>
@@ -176,17 +192,21 @@ export function WeekDetails({ weekData, onBack }: any) {
               marginTop: "2px",
             }}
           >
-            1 Litro
+            {topSize.name}
           </div>
           <div
-            style={{ fontSize: "0.75rem", color: "#00d2d3", marginTop: "2px" }}
+            style={{
+              fontSize: "0.75rem",
+              color: topSize.color,
+              marginTop: "2px",
+            }}
           >
-            {sizeData[0].value} unidades (70%)
+            {topSize.value} unidades ({topSize.percentage}%)
           </div>
         </div>
       </div>
 
-      {/* 3. SECCIÓN: Detalle por tamaño (Gráfico de Dona / Circular con total al centro) */}
+      {/* 3. SECCIÓN: Detalle por tamaño (Gráfico de Dona) */}
       <div>
         <div
           style={{ fontSize: "0.85rem", color: "#ccc", marginBottom: "8px" }}
@@ -209,7 +229,7 @@ export function WeekDetails({ weekData, onBack }: any) {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={sizeData}
+                  data={sizeData.filter((d) => d.value > 0)} // Solo grafica si hay datos reales
                   dataKey="value"
                   nameKey="name"
                   cx="50%"
@@ -218,9 +238,11 @@ export function WeekDetails({ weekData, onBack }: any) {
                   outerRadius={52}
                   stroke="none"
                 >
-                  {sizeData.map((entry, index) => (
-                    <Cell key={`cell-size-${index}`} fill={entry.color} />
-                  ))}
+                  {sizeData
+                    .filter((d) => d.value > 0)
+                    .map((entry, index) => (
+                      <Cell key={`cell-size-${index}`} fill={entry.color} />
+                    ))}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
@@ -275,7 +297,7 @@ export function WeekDetails({ weekData, onBack }: any) {
                 <div style={{ fontSize: "0.8rem", color: "#ddd" }}>
                   <div>{item.name}</div>
                   <div style={{ fontSize: "0.7rem", color: "#888" }}>
-                    {item.value} un. ({idx === 0 ? "70%" : "30%"})
+                    {item.value} un. ({item.percentage}%)
                   </div>
                 </div>
               </div>
