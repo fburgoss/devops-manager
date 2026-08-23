@@ -66,6 +66,7 @@ export function App() {
     name: string;
     price: number;
     quantity: number;
+    size: string;
   }) => {
     const totalAmount = saleData.price * saleData.quantity;
     try {
@@ -77,6 +78,7 @@ export function App() {
           price: saleData.price,
           quantity: saleData.quantity,
           total: totalAmount,
+          size: saleData.size,
         }),
       });
       if (response.ok) {

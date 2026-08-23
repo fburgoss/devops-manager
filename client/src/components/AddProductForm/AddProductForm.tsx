@@ -5,6 +5,7 @@ interface SaleFormData {
   name: string;
   price: number;
   quantity: number;
+  size: string;
 }
 
 interface AddProductFormProps {
@@ -35,10 +36,15 @@ export function AddProductForm({ onRegisterSale }: AddProductFormProps) {
       return;
     }
 
+    // 2. MAGIA AQUÍ: Detectamos el texto del tamaño según el precio seleccionado
+    const selectedSize =
+      Number(price) === currentPrices.litro ? "1 Litro" : "Medio Litro";
+
     onRegisterSale({
       name,
       price: Number(price),
       quantity: Number(quantity),
+      size: selectedSize,
     });
 
     setName("");
