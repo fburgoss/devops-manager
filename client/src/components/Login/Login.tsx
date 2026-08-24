@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Login.module.css";
+import logoImage from "../../assets/logo final.png";
 
 interface LoginProps {
   onLoginSuccess: (token: string) => void;
@@ -45,15 +46,11 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   return (
     <div className={styles.loginContainer}>
       <form onSubmit={handleSubmit} className={styles.loginForm}>
-        {/* Logo y Título iguales al panel principal */}
         <div className={styles.headerSection}>
           <img
-            src="/logo.png"
-            alt="El TintoBar Logo"
+            src={logoImage}
+            alt="El TiintoBar Logo"
             className={styles.logoImage}
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
           />
           <h1 className={styles.loginTitle}>El TintoBar</h1>
           <p className={styles.loginSubtitle}>
@@ -71,11 +68,10 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             className={styles.inputField}
-            placeholder="tucorreo@email.com"
           />
         </div>
 
-        <div className={styles.inputGroup}>
+        <div className={styles.inputGroup} style={{ marginBottom: "1.5rem" }}>
           <label className={styles.inputLabel}>Contraseña</label>
           <input
             type="password"
@@ -83,7 +79,6 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             onChange={(e) => setPassword(e.target.value)}
             required
             className={styles.inputField}
-            placeholder="••••••"
           />
         </div>
 
