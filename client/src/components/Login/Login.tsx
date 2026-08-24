@@ -35,11 +35,11 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       localStorage.setItem("token", data.access_token);
       onLoginSuccess(data.access_token);
 
-      // Recarga la página automáticamente para entrar limpio al panel
+      // Recarga limpia para entrar al panel sin errores de estado de React
       window.location.reload();
     } catch (err: any) {
       setError(err.message || "Credenciales incorrectas");
-      setLoading(false);
+      setLoading(false); // <--- Restablece el botón si hay error
     }
   };
 
