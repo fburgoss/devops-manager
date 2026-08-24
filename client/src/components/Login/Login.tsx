@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Login.css"; // <--- Importamos el archivo CSS que acabamos de crear
+import styles from "./Login.module.css";
 
 interface LoginProps {
   onLoginSuccess: (token: string) => void;
@@ -42,35 +42,35 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="loginContainer">
-      <form onSubmit={handleSubmit} className="loginForm">
-        <h2 className="loginTitle">El TintoBar - Login</h2>
+    <div className={styles.loginContainer}>
+      <form onSubmit={handleSubmit} className={styles.loginForm}>
+        <h2 className={styles.loginTitle}>El TintoBar - Login</h2>
 
-        {error && <div className="errorMessage">{error}</div>}
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
-        <div className="inputGroup">
-          <label className="inputLabel">Correo electrónico</label>
+        <div className={styles.inputGroup}>
+          <label className={styles.inputLabel}>Correo electrónico</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="inputField"
+            className={styles.inputField}
           />
         </div>
 
-        <div className="inputGroup" style={{ marginBottom: "1.5rem" }}>
-          <label className="inputLabel">Contraseña</label>
+        <div className={styles.inputGroup} style={{ marginBottom: "1.5rem" }}>
+          <label className={styles.inputLabel}>Contraseña</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="inputField"
+            className={styles.inputField}
           />
         </div>
 
-        <button type="submit" disabled={loading} className="loginButton">
+        <button type="submit" disabled={loading} className={styles.loginButton}>
           {loading ? "Ingresando..." : "Iniciar Sesión"}
         </button>
       </form>
