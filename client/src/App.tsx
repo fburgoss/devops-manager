@@ -459,7 +459,7 @@ export function App() {
         <div className={styles.logoContainer}>
           <img
             src={logoImg}
-            alt="El TintoBar Logo"
+            alt="El TiintoBar Logo"
             className={styles.brandLogo}
           />
         </div>

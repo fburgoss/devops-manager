@@ -23,8 +23,8 @@
 }
 
 .logoImage {
-  width: 90px; /* Tamaño perfecto y equilibrado */
-  height: 90px;
+  width: 115px;
+  height: 115px;
   object-fit: contain;
   margin-bottom: 0.75rem;
 }
