@@ -156,7 +156,7 @@ export function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setToken(null);
+    window.location.reload();
   };
 
   const totalDailyRevenue = sales.reduce(
