@@ -52,7 +52,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             alt="El TiintoBar Logo"
             className={styles.logoImage}
           />
-          <h1 className={styles.loginTitle}>El TintoBar</h1>
+          <h1 className={styles.loginTitle}>El TiintoBar</h1>
           <p className={styles.loginSubtitle}>
             Control rápido de transacciones diarias
           </p>
