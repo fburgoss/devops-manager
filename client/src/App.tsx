@@ -6,6 +6,7 @@ import {
   SalesHistory,
   type Sale,
 } from "./components/SalesHistory/SalesHistory";
+import { Login } from "./components/Login/Login"; // <--- Importamos tu componente de Login
 import logoImg from "./assets/logo final.png";
 import styles from "./App.module.css";
 
@@ -13,6 +14,11 @@ const API_URL =
   import.meta.env.VITE_API_URL || "https://tintobar-backend.onrender.com";
 
 export function App() {
+  // Estado para manejar el token de autenticación
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token"),
+  );
+
   const [sales, setSales] = useState<Sale[]>([]);
   const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
   const [showHistoryWidget, setShowHistoryWidget] = useState(true);
@@ -20,9 +26,16 @@ export function App() {
   const [historySummary, setHistorySummary] = useState<any>({});
   const [inventoryRefreshKey, setInventoryRefreshKey] = useState(0);
 
+  // Si no hay token, mostramos la pantalla de login directamente
+  if (!token) {
+    return <Login onLoginSuccess={(newToken) => setToken(newToken)} />;
+  }
+
   const fetchHistory = async () => {
     try {
-      const response = await fetch(`${API_URL}/sales/history-summary`);
+      const response = await fetch(`${API_URL}/sales/history-summary`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (response.ok) {
         const data = await response.json();
         setHistorySummary(data);
@@ -35,7 +48,9 @@ export function App() {
   useEffect(() => {
     const fetchSales = async () => {
       try {
-        const response = await fetch(`${API_URL}/sales`);
+        const response = await fetch(`${API_URL}/sales`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (response.ok) {
           const data = await response.json();
           setSales(
@@ -60,7 +75,7 @@ export function App() {
     };
     fetchSales();
     fetchHistory();
-  }, []);
+  }, [token]);
 
   const handleRegisterSale = async (saleData: {
     name: string;
@@ -72,7 +87,10 @@ export function App() {
     try {
       const response = await fetch(`${API_URL}/sales`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           name: saleData.name,
           price: saleData.price,
@@ -110,6 +128,7 @@ export function App() {
     if (window.confirm("¿Estás seguro de anular esta venta?")) {
       const response = await fetch(`${API_URL}/sales/${id}`, {
         method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) setSales((prev) => prev.filter((s) => s.id !== id));
     }
@@ -123,6 +142,7 @@ export function App() {
     ) {
       const response = await fetch(`${API_URL}/sales/close-day`, {
         method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (response.ok) {
         alert("¡Día finalizado y reporte enviado a tu correo con éxito!");
@@ -132,6 +152,11 @@ export function App() {
         alert("Hubo un error al enviar el reporte.");
       }
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken(null);
   };
 
   const totalDailyRevenue = sales.reduce(
@@ -145,6 +170,31 @@ export function App() {
 
   return (
     <div className={styles.container}>
+      {/* Botón de Cerrar Sesión en la esquina superior */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "10px 20px 0 20px",
+        }}
+      >
+        <button
+          onClick={handleLogout}
+          style={{
+            backgroundColor: "#333",
+            color: "#ff4757",
+            border: "1px solid #ff4757",
+            padding: "6px 12px",
+            borderRadius: "6px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            fontSize: "0.85rem",
+          }}
+        >
+          🚪 Cerrar Sesión
+        </button>
+      </div>
+
       <header className={styles.header}>
         <div
           style={{
