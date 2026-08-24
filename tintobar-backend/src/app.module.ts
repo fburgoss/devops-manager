@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { SalesModule } from './sales/sales.module'; // 1. Agrega esta línea
+import { SalesModule } from './sales/sales.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -10,7 +10,7 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'dpg-da1hn2lbedkc73d0jfq0-a',
+      host: 'dpg-da1hn2lbedkc73d0jfq0-a.oregon-postgres.render.com', // <--- Fíjate que le agregamos el dominio completo
       port: 5432,
       username: 'tintobar',
       password: 'wSambBrapTpFtw5WIpVKROH9pv6bQoJq',
