@@ -35,18 +35,31 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       localStorage.setItem("token", data.access_token);
       onLoginSuccess(data.access_token);
 
-      // Recarga limpia para entrar al panel sin errores de estado de React
       window.location.reload();
     } catch (err: any) {
       setError(err.message || "Credenciales incorrectas");
-      setLoading(false); // <--- Restablece el botón si hay error
+      setLoading(false);
     }
   };
 
   return (
     <div className={styles.loginContainer}>
       <form onSubmit={handleSubmit} className={styles.loginForm}>
-        <h2 className={styles.loginTitle}>El TintoBar - Login</h2>
+        {/* Logo y Título iguales al panel principal */}
+        <div className={styles.headerSection}>
+          <img
+            src="/logo.png"
+            alt="El TintoBar Logo"
+            className={styles.logoImage}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+          <h1 className={styles.loginTitle}>El TintoBar</h1>
+          <p className={styles.loginSubtitle}>
+            Control rápido de transacciones diarias
+          </p>
+        </div>
 
         {error && <div className={styles.errorMessage}>{error}</div>}
 
@@ -58,10 +71,11 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             onChange={(e) => setEmail(e.target.value)}
             required
             className={styles.inputField}
+            placeholder="tucorreo@email.com"
           />
         </div>
 
-        <div className={styles.inputGroup} style={{ marginBottom: "1.5rem" }}>
+        <div className={styles.inputGroup}>
           <label className={styles.inputLabel}>Contraseña</label>
           <input
             type="password"
@@ -69,6 +83,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             onChange={(e) => setPassword(e.target.value)}
             required
             className={styles.inputField}
+            placeholder="••••••"
           />
         </div>
 

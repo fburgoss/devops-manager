@@ -2,66 +2,105 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-color: #f5f5f5;
+  min-height: 100vh;
+  background-color: #121418; /* Mismo fondo oscuro de tu app */
+  padding: 1rem;
 }
 
 .loginForm {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #1a1d24; /* Mismo color de tarjeta de tu app */
+  border: 1px solid #2d323b;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
   width: 100%;
   max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.headerSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logoImage {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
 }
 
 .loginTitle {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #333;
+  color: #f3f4f6;
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin: 0;
+  font-family: serif; /* Estilo elegante similar al título principal */
+}
+
+.loginSubtitle {
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
 }
 
 .errorMessage {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  font-size: 14px;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
 }
 
 .inputGroup {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .inputLabel {
   display: block;
+  color: #d1d5db;
+  font-size: 0.9rem;
   margin-bottom: 0.5rem;
-  font-size: 14px;
-  color: #666;
 }
 
 .inputField {
   width: 100%;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: 0.75rem 1rem;
+  background-color: #121418;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
   box-sizing: border-box;
+}
+
+.inputField:focus {
+  border-color: #ef4444; /* Rojo elegante a juego con tus botones */
 }
 
 .loginButton {
   width: 100%;
-  padding: 10px;
-  background-color: #2e7d32;
+  padding: 0.75rem;
+  background-color: #ef4444; /* Mismo color rojo de tus botones de venta */
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
   margin-top: 0.5rem;
 }
 
+.loginButton:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
 .loginButton:disabled {
-  background-color: #a5d6a7;
+  opacity: 0.7;
   cursor: not-allowed;
 }
