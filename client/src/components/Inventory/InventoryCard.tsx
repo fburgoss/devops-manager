@@ -25,7 +25,11 @@ export default function InventoryCard({
     try {
       const response = await fetch(`${apiUrl}/inventory`);
       const data = await response.json();
-      setInventory(data);
+      const sortedData = data.sort(
+        (a: InventoryItem, b: InventoryItem) => a.id - b.id,
+      );
+
+      setInventory(sortedData);
     } catch (error) {
       console.error("Error al cargar el inventario:", error);
     } finally {
