@@ -33,15 +33,12 @@ export function SalesHistory({ sales, onDeleteSale }: SalesHistoryProps) {
         </p>
       ) : (
         <div className={styles.salesList}>
-          {sales
-            .slice()
-            .reverse()
-            .map((sale) => {
-              const formattedDate = new Date(sale.date).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              });
+          {sales.map((sale) => {
+            const formattedDate = new Date(sale.date).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            });
 
               // Forzamos que el total sea un número entero limpio sin decimales
               const cleanTotal = Math.round(Number(sale.total) || 0);

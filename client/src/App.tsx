@@ -56,7 +56,7 @@ export function App() {
           setSales(
             data.map((d: any) => ({
               id: String(d.id),
-              date: new Date().toISOString(),
+              date: d.createdAt || d.created_at || new Date().toISOString(),
               items: [
                 {
                   productId: d.id,
@@ -102,10 +102,9 @@ export function App() {
       if (response.ok) {
         const savedSale = await response.json();
         setSales((prev) => [
-          ...prev,
           {
             id: String(savedSale.id),
-            date: new Date().toISOString(),
+            date: savedSale.createdAt || savedSale.created_at || new Date().toISOString(),
             items: [
               {
                 productId: savedSale.id,
@@ -116,6 +115,7 @@ export function App() {
             ],
             total: savedSale.total,
           },
+          ...prev,
         ]);
         setInventoryRefreshKey((prev) => prev + 1);
       }
