@@ -13,6 +13,9 @@ export class MailService {
 
   async sendReport(total: number, count: number) {
     const today = new Date().toLocaleDateString();
+    const logoUrl =
+      process.env.LOGO_URL ||
+      'https://raw.githubusercontent.com/fburgoss/devops-manager/main/client/src/assets/logo%20final.png';
 
     await this.resend.emails.send({
       from: 'El TiintoBar <onboarding@resend.dev>',
@@ -22,6 +25,7 @@ export class MailService {
         <div style="background-color: #121212; color: #ffffff; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px 20px; border-radius: 8px;">
           <div style="max-width: 500px; margin: 0 auto; background-color: #1e1e1e; padding: 30px; border-radius: 12px; border: 1px solid #333333; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
             <div style="text-align: center; border-bottom: 2px solid #e53935; padding-bottom: 20px; margin-bottom: 25px;">
+              <img src="${logoUrl}" alt="El TiintoBar Logo" width="70" height="70" style="display: block; margin: 0 auto 12px auto; object-fit: contain;" />
               <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">EL TIINTOBAR</h1>
               <p style="color: #aaaaaa; margin: 5px 0 0 0; font-size: 14px;">Resumen de Cierre Diario</p>
             </div>
