@@ -20,7 +20,9 @@ export function App() {
   );
 
   const [sales, setSales] = useState<Sale[]>([]);
-  const [currentMonthIndex, setCurrentMonthIndex] = useState(0);
+  const [currentMonthIndex, setCurrentMonthIndex] = useState<number | null>(
+    null,
+  );
   const [showHistoryWidget, setShowHistoryWidget] = useState(true);
   const [selectedWeek, setSelectedWeek] = useState<any>(null);
   const [historySummary, setHistorySummary] = useState<any>({});
@@ -278,10 +280,28 @@ export function App() {
                 ) : (
                   (() => {
                     const monthsKeys = Object.keys(historySummary).reverse();
-                    const currentMonthName =
-                      monthsKeys[
-                        Math.min(currentMonthIndex, monthsKeys.length - 1)
-                      ];
+                    if (monthsKeys.length === 0) {
+                      return (
+                        <p
+                          style={{
+                            color: "#888",
+                            textAlign: "center",
+                            fontSize: "0.85rem",
+                            padding: "10px",
+                          }}
+                        >
+                          No hay historial de ventas cerradas todavía.
+                        </p>
+                      );
+                    }
+
+                    const activeIndex =
+                      currentMonthIndex !== null &&
+                      currentMonthIndex < monthsKeys.length
+                        ? currentMonthIndex
+                        : monthsKeys.length - 1;
+
+                    const currentMonthName = monthsKeys[activeIndex];
                     const weeks = historySummary[currentMonthName] || {};
 
                     const monthTotal = Object.values(weeks).reduce(
@@ -304,14 +324,15 @@ export function App() {
                         >
                           <button
                             onClick={() =>
-                              setCurrentMonthIndex((p) => Math.max(p - 1, 0))
+                              setCurrentMonthIndex(Math.max(activeIndex - 1, 0))
                             }
-                            disabled={currentMonthIndex === 0}
+                            disabled={activeIndex === 0}
                             style={{
                               background: "none",
                               border: "none",
-                              color: "#ff4757",
+                              color: activeIndex === 0 ? "#555" : "#ff4757",
                               fontWeight: "bold",
+                              cursor: activeIndex === 0 ? "default" : "pointer",
                             }}
                           >
                             ◀
@@ -338,18 +359,26 @@ export function App() {
                           </div>
                           <button
                             onClick={() =>
-                              setCurrentMonthIndex((p) =>
-                                Math.min(p + 1, monthsKeys.length - 1),
+                              setCurrentMonthIndex(
+                                Math.min(
+                                  activeIndex + 1,
+                                  monthsKeys.length - 1,
+                                ),
                               )
                             }
-                            disabled={
-                              currentMonthIndex === monthsKeys.length - 1
-                            }
+                            disabled={activeIndex === monthsKeys.length - 1}
                             style={{
                               background: "none",
                               border: "none",
-                              color: "#ff4757",
+                              color:
+                                activeIndex === monthsKeys.length - 1
+                                  ? "#555"
+                                  : "#ff4757",
                               fontWeight: "bold",
+                              cursor:
+                                activeIndex === monthsKeys.length - 1
+                                  ? "default"
+                                  : "pointer",
                             }}
                           >
                             ▶
