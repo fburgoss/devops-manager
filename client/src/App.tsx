@@ -56,7 +56,7 @@ export function App() {
           setSales(
             data.map((d: any) => ({
               id: String(d.id),
-              date: d.createdAt || d.created_at || new Date().toISOString(),
+              date: d.createdAt || new Date().toISOString(),
               items: [
                 {
                   productId: d.id,
@@ -104,7 +104,7 @@ export function App() {
         setSales((prev) => [
           {
             id: String(savedSale.id),
-            date: savedSale.createdAt || savedSale.created_at || new Date().toISOString(),
+            date: savedSale.createdAt || new Date().toISOString(),
             items: [
               {
                 productId: savedSale.id,
