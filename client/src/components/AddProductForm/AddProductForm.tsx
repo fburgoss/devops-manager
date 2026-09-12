@@ -16,7 +16,7 @@ interface AddProductFormProps {
 const DRINK_PRICES: Record<string, { litro: number; medio: number }> = {
   Borgoña: { litro: 7000, medio: 4000 },
   Daiquiri: { litro: 7000, medio: 4000 },
-  Terremoto: { litro: 7000, medio: 4000 },
+  Terremoto: { litro: 6000, medio: 3500 },
   "Piña Colada": { litro: 9000, medio: 5500 },
 };
 

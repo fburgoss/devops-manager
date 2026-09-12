@@ -31,7 +31,7 @@ export class SalesService {
       const esMedioLitro = savedSale.size
         ? savedSale.size.toLowerCase().includes('medio') ||
           savedSale.size.includes('0.5')
-        : Number(savedSale.price) === 4000;
+        : [4000, 3500, 5500].includes(Number(savedSale.price));
 
       const sticker = await this.inventoryRepository.findOneBy({
         name: 'Stickers',
