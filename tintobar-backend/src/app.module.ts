@@ -10,11 +10,13 @@ import { AuthModule } from './auth/auth.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'dpg-da1hn2lbedkc73d0jfq0-a.oregon-postgres.render.com', // <--- Fíjate que le agregamos el dominio completo
-      port: 5432,
-      username: 'tintobar',
-      password: 'wSambBrapTpFtw5WIpVKROH9pv6bQoJq',
-      database: 'tintobardb',
+      host:
+        process.env.DB_HOST ||
+        'dpg-dam175tbedkc73a9khd0-a.oregon-postgres.render.com',
+      port: Number(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USERNAME || 'ttintobar_db_user',
+      password: process.env.DB_PASSWORD || 'KG7Aihep4ELTfvmX6LUSLbl0RrtjazTe',
+      database: process.env.DB_NAME || 'ttintobar_db',
       autoLoadEntities: true,
       synchronize: true,
       ssl: { rejectUnauthorized: false },
